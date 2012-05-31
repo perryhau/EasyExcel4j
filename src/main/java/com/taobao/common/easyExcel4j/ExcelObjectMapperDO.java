@@ -1,14 +1,16 @@
 package com.taobao.common.easyExcel4j;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 
 public class ExcelObjectMapperDO implements Serializable {
 
 	private static final long serialVersionUID = 7745296502632710593L;
 
 	private String objectFieldName;
+	private Method method;
 	private String excelColumnName;
-	private int excelColumnNum;
+	private Integer excelColumnNum;
 	private boolean required;
 
 	public String getObjectFieldName() {
@@ -27,11 +29,11 @@ public class ExcelObjectMapperDO implements Serializable {
 		this.excelColumnName = excelColumnName;
 	}
 
-	public int getExcelColumnNum() {
+	public Integer getExcelColumnNum() {
 		return excelColumnNum;
 	}
 
-	public void setExcelColumnNum(int excelColumnNum) {
+	public void setExcelColumnNum(Integer excelColumnNum) {
 		this.excelColumnNum = excelColumnNum;
 	}
 
@@ -43,4 +45,16 @@ public class ExcelObjectMapperDO implements Serializable {
 		this.required = required;
 	}
 
+	public Method getMethod() {
+		return method;
+	}
+
+	public void setMethod(Method method) {
+		this.method = method;
+	}
+	
+	@Override
+	public String toString() {
+		return this.excelColumnName.toString();
+	}
 }

@@ -6,30 +6,51 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
-public class EasyExcelCglibProxy<T> implements MethodInterceptor {
+public class EasyExcelCglibProxy implements MethodInterceptor {
 
-	private static final ThreadLocal<Method> threadLocal = new ThreadLocal<Method>();
+	public Class<?> clazz;
 
-	public Class<T> clazz;
-
-	public EasyExcelCglibProxy(Class<T> clazz) {
+	public <T> EasyExcelCglibProxy(Class<T> clazz) {
 		this.clazz = clazz;
 	}
 
 	@Override
 	public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-		threadLocal.set(method);
-		// 通过代理类实例调用父类的方法，即是目标业务类方法的调用
+		ExcelObjectMapperDO eom = AbstractMapperStrategy.getThreadLocal().get(clazz).getLast();
+		if (eom != null) {
+			eom.setMethod(method);
+			eom.setObjectFieldName(toLowerCaseInitial(method.getName().substring(3), true));
+		}
 		return proxy.invokeSuper(obj, args);
 	}
 
-	// 覆盖MethodInterceptor接口的getProxy()方法，设置
 	@SuppressWarnings("unchecked")
-	public T getProxyInstance() {
+	public <T> T getProxyInstance() {
 		Enhancer enhancer = new Enhancer();
-		enhancer.setSuperclass(clazz); // 设者要创建子类的类
-		enhancer.setCallback(this); // 设置回调的对象
-		return (T) enhancer.create(); // 通过字节码技术动态创建子类实例,
+		// 设者要创建子类的类
+		enhancer.setSuperclass(clazz);
+		// 设置回调的对象
+		enhancer.setCallback(this);
+		return (T) enhancer.create();
+	}
+
+	/**
+	 * 将一个字符串的首字母改为大写或者小写
+	 * 
+	 * @param srcString
+	 * @param flag
+	 *            大小写标识，ture小写，false大些
+	 * @return 改写后的新字符串
+	 */
+	private static String toLowerCaseInitial(String srcString, boolean flag) {
+		StringBuilder sb = new StringBuilder();
+		if (flag) {
+			sb.append(Character.toLowerCase(srcString.charAt(0)));
+		} else {
+			sb.append(Character.toUpperCase(srcString.charAt(0)));
+		}
+		sb.append(srcString.substring(1));
+		return sb.toString();
 	}
 
 }
