@@ -19,9 +19,19 @@ public class EasyExcel {
 	/**
 	 * µãºÅ
 	 */
-	public static final String DOT = ".";
+	private static final String DOT = ".";
 
 	public static <T> List<T> export(FileItem fileItem, MapperStrategy mapperStrategy) throws Exception {
+		try {
+			return doExport(fileItem, mapperStrategy);
+		} catch (Exception e) {
+			throw e;
+		} finally{
+			mapperStrategy.clean();
+		}
+	}
+	
+	private static <T> List<T> doExport(FileItem fileItem, MapperStrategy mapperStrategy) throws Exception {
 		List<T> result = new ArrayList<T>();
 		if (fileItem == null) {
 			return result;

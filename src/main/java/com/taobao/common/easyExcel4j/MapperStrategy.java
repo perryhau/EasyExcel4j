@@ -11,5 +11,7 @@ public interface MapperStrategy {
 	List<ExcelObjectMapperDO> getAbsenceExcelColumn();
 
 	<T> T getTargetObject() throws Exception;
+	
+	void clean();
 
 }

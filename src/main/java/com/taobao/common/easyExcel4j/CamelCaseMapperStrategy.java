@@ -6,4 +6,10 @@ public class CamelCaseMapperStrategy extends AbstractMapperStrategy {
 		super(clazz);
 	}
 
+	@Override
+	protected void init() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

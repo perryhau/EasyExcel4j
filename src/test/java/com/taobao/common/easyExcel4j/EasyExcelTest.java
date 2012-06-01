@@ -16,9 +16,9 @@ import org.junit.Test;
 public class EasyExcelTest {
 
 	@Test
-	public void testTarget() throws Exception {
+	public void testDynamicMapperStrategy() throws Exception {
 		MapperStrategyFactory factory = MapperStrategyFactory.getInstance();
-		DefaultMapperStrategy strategy = factory.getDefaultMapperStrategy(EeUser.class);
+		DynamicMapperStrategy strategy = factory.getDynamicMapperStrategy(EeUser.class);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
