@@ -2,16 +2,21 @@ package com.taobao.common.easyExcel4j;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExcelObjectMapperDO implements Serializable {
 
 	private static final long serialVersionUID = 7745296502632710593L;
 
 	private String objectFieldName;
+	private Class<?> objectFieldType;
 	private Method method;
 	private String excelColumnName;
 	private Integer excelColumnNum;
 	private boolean required;
+
+	private Map<String, Boolean> booleanMap = new HashMap<String, Boolean>();
 
 	public String getObjectFieldName() {
 		return objectFieldName;
@@ -52,9 +57,26 @@ public class ExcelObjectMapperDO implements Serializable {
 	public void setMethod(Method method) {
 		this.method = method;
 	}
-	
+
+	public Class<?> getObjectFieldType() {
+		return objectFieldType;
+	}
+
+	public void setObjectFieldType(Class<?> objectFieldType) {
+		this.objectFieldType = objectFieldType;
+	}
+
 	@Override
 	public String toString() {
 		return this.excelColumnName.toString();
 	}
+
+	public Map<String, Boolean> getBooleanMap() {
+		return booleanMap;
+	}
+
+	public void setBooleanMap(Map<String, Boolean> booleanMap) {
+		this.booleanMap = booleanMap;
+	}
+
 }

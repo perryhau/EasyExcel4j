@@ -12,7 +12,7 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 
 	private static final ThreadLocal<LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>>> threadLocalMap = new ThreadLocal<LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>>>();
 
-	public static LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>> getThreadLocal() {
+	protected static LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>> getThreadLocal() {
 		if (threadLocalMap.get() == null) {
 			threadLocalMap.set(new LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>>());
 		}
@@ -26,6 +26,7 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 		} else {
 			AbstractMapperStrategy.getThreadLocal().get(clazz).clear();
 		}
+		init();
 	}
 
 	protected static <T> void add(Class<T> clazz, ExcelObjectMapperDO eom) {
@@ -67,5 +68,11 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 	public <T> T getTargetObject() throws Exception {
 		return (T) this.clazz.newInstance();
 	}
+	
+	@Override
+	public void clean() {
+		threadLocalMap.remove();
+	}
 
+	protected abstract void init();
 }

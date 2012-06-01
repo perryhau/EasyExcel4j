@@ -16,14 +16,17 @@ import org.junit.Test;
 public class EasyExcelTest {
 
 	@Test
-	public void testTarget() throws Exception {
+	public void testDynamicMapperStrategy() throws Exception {
 		MapperStrategyFactory factory = MapperStrategyFactory.getInstance();
-		DefaultMapperStrategy strategy = factory.getDefaultMapperStrategy(EeUser.class);
+		DynamicMapperStrategy strategy = factory.getDynamicMapperStrategy(EeUser.class);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
 
 		user.setUserName(strategy.anyString("姓名"));
+		user.setAge(strategy.anyInteger("年龄"));
+		user.setGender(strategy.anyBoolean("性别", "男", "女"));
+		user.setPhone(strategy.anyLong("手机"));
 
 		String path = this.getClass().getResource("/").getPath();
 		FileItem fileItem = createFileItem(path, "test1.xls");
@@ -31,6 +34,9 @@ public class EasyExcelTest {
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
 		Assert.assertEquals("张三", list.get(0).getUserName());
+		Assert.assertEquals(25, list.get(0).getAge());
+		Assert.assertEquals(12312341234L, list.get(0).getPhone());
+		Assert.assertEquals(true, list.get(0).isGender());
 	}
 
 	private FileItem createFileItem(String path, String fileName) {

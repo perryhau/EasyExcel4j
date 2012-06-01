@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 /target/
 /.settings/
 
 *.classpath
 *.project
+=======
+/target/**
+>>>>>>> 2012-5-31

@@ -1,11 +1,10 @@
 package com.taobao.common.easyExcel4j;
 
-import java.util.Date;
-
 public class EeUser {
 	private String userName;
+	private boolean gender;
 	private int age;
-	private Date birthdate;
+	private long phone;
 
 	public String getUserName() {
 		return userName;
@@ -23,11 +22,19 @@ public class EeUser {
 		this.age = age;
 	}
 
-	public Date getBirthdate() {
-		return birthdate;
+	public boolean isGender() {
+		return gender;
 	}
 
-	public void setBirthdate(Date birthdate) {
-		this.birthdate = birthdate;
+	public void setGender(boolean gender) {
+		this.gender = gender;
+	}
+
+	public long getPhone() {
+		return phone;
+	}
+
+	public void setPhone(long phone) {
+		this.phone = phone;
 	}
 }

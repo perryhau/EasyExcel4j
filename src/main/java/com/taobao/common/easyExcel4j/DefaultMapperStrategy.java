@@ -6,21 +6,10 @@ public class DefaultMapperStrategy extends AbstractMapperStrategy {
 		super(clazz);
 	}
 
-	public <T> T getInstance() {
-		EasyExcelCglibProxy proxy = new EasyExcelCglibProxy(clazz);
-		return proxy.getProxyInstance();
-	}
+	@Override
+	protected void init() {
+		// TODO Auto-generated method stub
 
-	public String anyString(String columnName) {
-		return anyString(columnName, true);
-	}
-
-	public String anyString(String columnName, boolean required) {
-		ExcelObjectMapperDO eom = new ExcelObjectMapperDO();
-		eom.setExcelColumnName(columnName);
-		eom.setRequired(required);
-		add(clazz, eom);
-		return null;
 	}
 
 }

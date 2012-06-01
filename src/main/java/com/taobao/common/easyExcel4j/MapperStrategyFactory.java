@@ -22,4 +22,8 @@ public class MapperStrategyFactory {
 		return new DefaultMapperStrategy(clazz);
 	}
 
+	public <T> DynamicMapperStrategy getDynamicMapperStrategy(Class<T> clazz) {
+		return new DynamicMapperStrategy(clazz);
+	}
+
 }
