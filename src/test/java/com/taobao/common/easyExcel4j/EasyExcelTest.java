@@ -26,11 +26,13 @@ public class EasyExcelTest {
 		user.setUserName(strategy.anyString("姓名"));
 		user.setAge(strategy.anyInteger("年龄"));
 		user.setGender(strategy.anyBoolean("性别", "男", "女"));
-		user.setPhone(strategy.anyLong("手机"));
+		user.setPhone(strategy.anyLong("手机",true));
 
 		String path = this.getClass().getResource("/").getPath();
 		FileItem fileItem = createFileItem(path, "test1.xls");
+		
 		List<EeUser> list = EasyExcel.export(fileItem, strategy);
+		
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
 		Assert.assertEquals("张三", list.get(0).getUserName());

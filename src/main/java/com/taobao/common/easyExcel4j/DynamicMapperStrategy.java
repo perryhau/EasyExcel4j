@@ -1,5 +1,6 @@
 package com.taobao.common.easyExcel4j;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,15 +106,25 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 
 	// Boolean
 	public boolean anyBoolean(String columnName, String isTrueString, String isFalseString) {
-		return anyBoolean(columnName, true, isTrueString, isFalseString);
+		return anyBoolean(columnName, isTrueString, isFalseString, true);
 	}
 
-	public boolean anyBoolean(String columnName, boolean required, String isTrueString, String isFalseString) {
+	public boolean anyBoolean(String columnName, String isTrueString, String isFalseString, boolean required) {
 		Map<String, Boolean> map = new HashMap<String, Boolean>();
 		map.put(isTrueString, Boolean.TRUE);
 		map.put(isFalseString, Boolean.FALSE);
 		add(columnName, required, Boolean.class, map);
 		return true;
+	}
+
+	// Date
+	public Date anyDate(String columnName, String pattern) {
+		return anyDate(columnName, pattern, true);
+	}
+
+	public Date anyDate(String columnName, String pattern, boolean required) {
+		add(columnName, required, Character.class, null);
+		return null;
 	}
 
 	@Override
