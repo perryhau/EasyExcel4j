@@ -11,12 +11,14 @@ import junit.framework.Assert;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
-public class EasyExcelTest {
+public class EasyExcelTest extends BaseTest {
 
 	@Test
 	public void testDynamicMapperStrategy() throws Exception {
+
 		MapperStrategyFactory factory = MapperStrategyFactory.getInstance();
 		DynamicMapperStrategy strategy = factory.getDynamicMapperStrategy(EeUser.class);
 		EeUser user = strategy.getInstance();
@@ -26,19 +28,25 @@ public class EasyExcelTest {
 		user.setUserName(strategy.anyString("姓名"));
 		user.setAge(strategy.anyInteger("年龄"));
 		user.setGender(strategy.anyBoolean("性别", "男", "女"));
-		user.setPhone(strategy.anyLong("手机",true));
+		user.setPhone(strategy.anyLong("手机"));
+		user.setBirth(strategy.anyDate("出生日期"));
+		user.setSalary(strategy.anyDouble("工资"));
 
 		String path = this.getClass().getResource("/").getPath();
 		FileItem fileItem = createFileItem(path, "test1.xls");
-		
+
 		List<EeUser> list = EasyExcel.export(fileItem, strategy);
-		
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
-		Assert.assertEquals("张三", list.get(0).getUserName());
-		Assert.assertEquals(25, list.get(0).getAge());
-		Assert.assertEquals(12312341234L, list.get(0).getPhone());
-		Assert.assertEquals(true, list.get(0).isGender());
+
+		EeUser result = list.get(0);
+		Assert.assertEquals("张三", result.getUserName());
+		Assert.assertEquals(25, result.getAge());
+		Assert.assertEquals(true, result.isGender());
+		Assert.assertEquals(12312341234L, result.getPhone());
+		Assert.assertEquals(DateUtils.parseDate("1985/5/3", new String[] { "yyyy/M/d" }), result.getBirth());
+		Assert.assertEquals(100.25d, result.getSalary());
+
 	}
 
 	private FileItem createFileItem(String path, String fileName) {

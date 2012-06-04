@@ -2,7 +2,6 @@ package com.taobao.common.easyExcel4j;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ExcelObjectMapperDO implements Serializable {
@@ -16,7 +15,7 @@ public class ExcelObjectMapperDO implements Serializable {
 	private Integer excelColumnNum;
 	private boolean required;
 
-	private Map<String, Boolean> booleanMap = new HashMap<String, Boolean>();
+	private Map<String, ?> valueMap = null;
 
 	public String getObjectFieldName() {
 		return objectFieldName;
@@ -71,12 +70,12 @@ public class ExcelObjectMapperDO implements Serializable {
 		return this.excelColumnName.toString();
 	}
 
-	public Map<String, Boolean> getBooleanMap() {
-		return booleanMap;
+	public Map<String, ?> getValueMap() {
+		return valueMap;
 	}
 
-	public void setBooleanMap(Map<String, Boolean> booleanMap) {
-		this.booleanMap = booleanMap;
+	public void setValueMap(Map<String, ?> valueMap) {
+		this.valueMap = valueMap;
 	}
 
 }

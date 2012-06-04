@@ -15,13 +15,13 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 		return proxy.getProxyInstance();
 	}
 
-	private void add(String columnName, boolean required, Class<?> type, Map<String, Boolean> map) {
+	private ExcelObjectMapperDO add(String columnName, boolean required, Class<?> type) {
 		ExcelObjectMapperDO eom = new ExcelObjectMapperDO();
 		eom.setExcelColumnName(columnName);
 		eom.setRequired(required);
 		eom.setObjectFieldType(type);
-		eom.setBooleanMap(map);
 		add(clazz, eom);
+		return eom;
 	}
 
 	// String
@@ -30,7 +30,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public String anyString(String columnName, boolean required) {
-		add(columnName, required, String.class, null);
+		add(columnName, required, String.class);
 		return null;
 	}
 
@@ -40,7 +40,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public int anyInteger(String columnName, boolean required) {
-		add(columnName, required, Integer.class, null);
+		add(columnName, required, Integer.class);
 		return 0;
 	}
 
@@ -50,7 +50,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public long anyLong(String columnName, boolean required) {
-		add(columnName, required, Long.class, null);
+		add(columnName, required, Long.class);
 		return 0L;
 	}
 
@@ -60,7 +60,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public double anyDouble(String columnName, boolean required) {
-		add(columnName, required, Double.class, null);
+		add(columnName, required, Double.class);
 		return 0d;
 	}
 
@@ -70,7 +70,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public float anyFloat(String columnName, boolean required) {
-		add(columnName, required, Float.class, null);
+		add(columnName, required, Float.class);
 		return 0f;
 	}
 
@@ -80,7 +80,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public byte anyByte(String columnName, boolean required) {
-		add(columnName, required, Byte.class, null);
+		add(columnName, required, Byte.class);
 		return '0';
 	}
 
@@ -90,7 +90,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public short anyShort(String columnName, boolean required) {
-		add(columnName, required, Short.class, null);
+		add(columnName, required, Short.class);
 		return '0';
 	}
 
@@ -100,7 +100,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public char anyCharacter(String columnName, boolean required) {
-		add(columnName, required, Character.class, null);
+		add(columnName, required, Character.class);
 		return '0';
 	}
 
@@ -113,17 +113,17 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 		Map<String, Boolean> map = new HashMap<String, Boolean>();
 		map.put(isTrueString, Boolean.TRUE);
 		map.put(isFalseString, Boolean.FALSE);
-		add(columnName, required, Boolean.class, map);
+		add(columnName, required, Boolean.class).setValueMap(map);
 		return true;
 	}
 
 	// Date
-	public Date anyDate(String columnName, String pattern) {
-		return anyDate(columnName, pattern, true);
+	public Date anyDate(String columnName) {
+		return anyDate(columnName, true);
 	}
 
-	public Date anyDate(String columnName, String pattern, boolean required) {
-		add(columnName, required, Character.class, null);
+	public Date anyDate(String columnName, boolean required) {
+		add(columnName, required, Date.class);
 		return null;
 	}
 

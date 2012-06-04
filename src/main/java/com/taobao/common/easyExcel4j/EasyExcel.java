@@ -2,13 +2,16 @@ package com.taobao.common.easyExcel4j;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -26,11 +29,11 @@ public class EasyExcel {
 			return doExport(fileItem, mapperStrategy);
 		} catch (Exception e) {
 			throw e;
-		} finally{
+		} finally {
 			mapperStrategy.clean();
 		}
 	}
-	
+
 	private static <T> List<T> doExport(FileItem fileItem, MapperStrategy mapperStrategy) throws Exception {
 		List<T> result = new ArrayList<T>();
 		if (fileItem == null) {
@@ -54,7 +57,7 @@ public class EasyExcel {
 		HSSFRow row = sheet.getRow(0);
 		// check columnNum
 		List<ExcelObjectMapperDO> absence = mapperStrategy.getAbsenceExcelColumn();
-		if(!absence.isEmpty()){
+		if (!absence.isEmpty()) {
 			// 根据字段名称找列号
 			Iterator<?> it = row.cellIterator();
 			for (int i = 0; it.hasNext(); i++) {
@@ -68,7 +71,7 @@ public class EasyExcel {
 			}
 			absence = mapperStrategy.getAbsenceExcelColumn();
 		}
-		
+
 		// 验证所有列明是否存在
 		if (absence.size() > 0) {
 			throw new Exception("required column [" + absence.toString() + "]");
@@ -80,12 +83,10 @@ public class EasyExcel {
 			if (row == null) {
 				continue;
 			}
-			try {
-				T t = fill(row, mapperStrategy);
-				result.add(t);
-			} catch (Exception e) {
-				continue;
-			}
+
+			T t = fill(row, mapperStrategy);
+			result.add(t);
+
 		}
 
 		return result;
@@ -114,11 +115,23 @@ public class EasyExcel {
 		if (cell == null) {
 			return null;
 		}
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-			return String.valueOf(cell.getNumericCellValue());
-		} else {
-			return cell.getRichStringCellValue().getString();
+		String value = null;
+		switch (cell.getCellType()) {
+		case HSSFCell.CELL_TYPE_NUMERIC:
+		case HSSFCell.CELL_TYPE_FORMULA:
+			if (HSSFDateUtil.isCellDateFormatted(cell)) {
+				value = String.valueOf(cell.getDateCellValue().getTime());
+			} else {
+				value = String.valueOf(cell.getNumericCellValue());
+			}
+			break;
+		case HSSFCell.CELL_TYPE_STRING:
+			value = cell.getRichStringCellValue().getString();
+			break;
 		}
+
+		return value;
+
 	}
 
 	/**
@@ -144,25 +157,38 @@ public class EasyExcel {
 			if (getCellStringValue(cell) != null) {
 				try {
 					Class<?> fieldType = eom.getObjectFieldType();
-					if(fieldType.equals(Integer.class)){
+					if (fieldType.equals(Integer.class)) {
 						BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
 								new BigDecimal(getCellStringValue(cell)).intValue());
 						continue;
 					}
-					if(fieldType.equals(Long.class)){
+					if (fieldType.equals(Long.class)) {
 						BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
 								new BigDecimal(getCellStringValue(cell)).longValue());
 						continue;
 					}
-					if(fieldType.equals(Boolean.class)){
+					if (fieldType.equals(Boolean.class)) {
+						if (eom.getValueMap() != null && !eom.getValueMap().isEmpty()) {
+							Map<String, ?> valueMap = eom.getValueMap();
+							boolean value = (Boolean) valueMap.get(getCellStringValue(cell));
+							BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
+									value);
+						} else {
+							BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
+									Boolean.valueOf(getCellStringValue(cell)));
+						}
+						continue;
+					}
+					if (fieldType.equals(Date.class)) {
+						Date value = new Date(Long.parseLong(getCellStringValue(cell)));
 						BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
-								eom.getBooleanMap().get(getCellStringValue(cell)).booleanValue());
+								value);
 						continue;
 					}
 					BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
 							getCellStringValue(cell));
 				} catch (Exception e) {
-					throw new Exception(eom.getExcelColumnName() + "set value to object error.");
+					throw new Exception(eom.getExcelColumnName() + "set value to object error.", e);
 				}
 			}
 		}
