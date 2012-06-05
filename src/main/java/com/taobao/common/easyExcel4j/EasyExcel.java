@@ -66,10 +66,7 @@ public class EasyExcel {
 		for (int i = 0; it.hasNext(); i++) {
 			HSSFCell cell = (HSSFCell) it.next();
 			for (ExcelObjectMapperDO eom : mapperStrategy.getMapperDOs()) {
-				if (eom.getExcelColumnName().equals(getCellStringValue(cell))) {
-					eom.setExcelColumnNum(i);
-					break;
-				}
+				mapperStrategy.intExcelObjectMapperDO(eom, getCellStringValue(cell), i);
 			}
 		}
 		// 必要的column为空的
@@ -178,17 +175,17 @@ public class EasyExcel {
 			if (getCellStringValue(cell) != null) {
 				try {
 					Class<?> fieldType = eom.getObjectFieldType();
-					if (fieldType.equals(Integer.class)) {
+					if (fieldType.equals(Integer.class) || fieldType.getSimpleName().equals("int")) {
 						BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
 								new BigDecimal(getCellStringValue(cell)).intValue());
 						continue;
 					}
-					if (fieldType.equals(Long.class)) {
+					if (fieldType.getSimpleName().equalsIgnoreCase("long")) {
 						BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
 								new BigDecimal(getCellStringValue(cell)).longValue());
 						continue;
 					}
-					if (fieldType.equals(Boolean.class)) {
+					if (fieldType.getSimpleName().equalsIgnoreCase("boolean")) {
 						if (eom.getValueMap() != null && !eom.getValueMap().isEmpty()) {
 							Map<String, ?> valueMap = eom.getValueMap();
 							boolean value = (Boolean) valueMap.get(getCellStringValue(cell));
@@ -200,7 +197,7 @@ public class EasyExcel {
 						}
 						continue;
 					}
-					if (fieldType.equals(Date.class)) {
+					if (fieldType.getSimpleName().equalsIgnoreCase("Date")) {
 						Date value = new Date(Long.parseLong(getCellStringValue(cell)));
 						BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
 								value);

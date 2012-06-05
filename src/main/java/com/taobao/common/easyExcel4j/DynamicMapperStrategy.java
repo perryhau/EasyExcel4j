@@ -132,4 +132,11 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 
 	}
 
+	@Override
+	public void intExcelObjectMapperDO(ExcelObjectMapperDO eom, String excelColumnName, int excelColumnNum) {
+		if (eom.getExcelColumnName().equals(excelColumnName)) {
+			eom.setExcelColumnNum(excelColumnNum);
+		}
+	}
+
 }

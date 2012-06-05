@@ -1,22 +1,16 @@
 package com.taobao.common.easyExcel4j;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import junit.framework.Assert;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 public class DynamicMapperTest extends BaseTest {
 
-	private FileItem fileItem = createFileItem(this.getClass().getResource("/").getPath(), "test1.xls");
+	private FileItem fileItem = createFileItem(this.getClass().getResource("/").getPath(), "DynamicMapperTest.xls");
 
 	@Test
 	public void testAbsence_1() throws Exception {
@@ -78,27 +72,6 @@ public class DynamicMapperTest extends BaseTest {
 		Assert.assertEquals(DateUtils.parseDate("1985/5/3", new String[] { "yyyy/M/d" }), result.getBirth());
 		Assert.assertEquals(100.25d, result.getSalary());
 
-	}
-
-	private FileItem createFileItem(String path, String fileName) {
-		FileItemFactory factory = new DiskFileItemFactory(16, null);
-		String textFieldName = "textField";
-		FileItem item = factory.createItem(textFieldName, "text/plain", true, fileName);
-		File newfile = new File(path + fileName);
-		int bytesRead = 0;
-		byte[] buffer = new byte[8192];
-		try {
-			FileInputStream fis = new FileInputStream(newfile);
-			OutputStream os = item.getOutputStream();
-			while ((bytesRead = fis.read(buffer, 0, 8192)) != -1) {
-				os.write(buffer, 0, bytesRead);
-			}
-			os.close();
-			fis.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return item;
 	}
 
 }

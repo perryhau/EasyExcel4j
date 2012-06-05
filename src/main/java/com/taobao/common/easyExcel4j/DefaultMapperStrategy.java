@@ -12,4 +12,10 @@ public class DefaultMapperStrategy extends AbstractMapperStrategy {
 
 	}
 
+	@Override
+	public void intExcelObjectMapperDO(ExcelObjectMapperDO eom, String excelColumnName, int excelColumnNum) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
