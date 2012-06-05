@@ -9,6 +9,7 @@ public class EeUser {
 	private long phone;
 	private Date birth;
 	private double salary;
+	private String description;
 
 	public String getUserName() {
 		return userName;
@@ -56,6 +57,14 @@ public class EeUser {
 
 	public void setSalary(double salary) {
 		this.salary = salary;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

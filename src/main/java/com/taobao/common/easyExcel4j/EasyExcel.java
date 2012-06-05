@@ -19,14 +19,87 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class EasyExcel {
 
+	private HSSFWorkbook wb;
+	private FileItem fileItem;
+	private MapperStrategy mapperStrategy;
+
 	/**
 	 * 点号
 	 */
 	private static final String DOT = ".";
 
-	public static <T> List<T> export(FileItem fileItem, MapperStrategy mapperStrategy) throws Exception {
+	public EasyExcel(FileItem fileItem, MapperStrategy mapperStrategy) {
+		this.fileItem = fileItem;
+		this.mapperStrategy = mapperStrategy;
+	}
+
+	/**
+	 * 检查缺省的Excel column
+	 * 
+	 * @param fileItem
+	 * @param mapperStrategy
+	 * @return
+	 * @throws Exception
+	 */
+	public List<ExcelObjectMapperDO> getAbsenceExcelColumn() throws Exception {
+		if (fileItem == null || mapperStrategy == null) {
+			throw new IllegalArgumentException("Argument is null.");
+		}
+		// 检查文件后缀
+		String suffix = getFileSuffix(fileItem.getName());
+		if (suffix == null || !suffix.equalsIgnoreCase("xls")) {
+			throw new IllegalArgumentException("Error file type.");
+		}
+		// 读取文件
+		POIFSFileSystem fs = new POIFSFileSystem(fileItem.getInputStream());
+		wb = new HSSFWorkbook(fs);
+		// 获取第一个sheet
+		HSSFSheet sheet = wb.getSheetAt(0);
+		// 验证有误数据
+		if (sheet == null || sheet.getLastRowNum() < 1) {
+			throw new IllegalArgumentException("file content is null.");
+		}
+		// 找到第一行
+		HSSFRow row = sheet.getRow(0);
+		// 根据字段名称找列号
+		Iterator<?> it = row.cellIterator();
+		for (int i = 0; it.hasNext(); i++) {
+			HSSFCell cell = (HSSFCell) it.next();
+			for (ExcelObjectMapperDO eom : mapperStrategy.getMapperDOs()) {
+				if (eom.getExcelColumnName().equals(getCellStringValue(cell))) {
+					eom.setExcelColumnNum(i);
+					break;
+				}
+			}
+		}
+		// 必要的column为空的
+		return mapperStrategy.getAbsenceExcelColumn();
+	}
+
+	public <T> List<T> export() throws Exception {
 		try {
-			return doExport(fileItem, mapperStrategy);
+			List<T> result = new ArrayList<T>();
+			// 检查缺省的Excel column
+			List<ExcelObjectMapperDO> absence = getAbsenceExcelColumn();
+			// 验证所有列明是否存在
+			if (absence.size() > 0) {
+				throw new Exception("required column [" + absence.toString() + "]");
+			}
+			// 抽取指定字段的数据
+			HSSFSheet sheet = wb.getSheetAt(0);
+			HSSFRow row = null;
+			int maxRowNum = sheet.getLastRowNum();
+			for (int i = 1; i <= maxRowNum; i++) {
+				row = sheet.getRow(i);
+				if (row == null) {
+					continue;
+				}
+
+				T t = fill(row, mapperStrategy);
+				result.add(t);
+
+			}
+			return result;
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -34,65 +107,13 @@ public class EasyExcel {
 		}
 	}
 
-	private static <T> List<T> doExport(FileItem fileItem, MapperStrategy mapperStrategy) throws Exception {
-		List<T> result = new ArrayList<T>();
-		if (fileItem == null) {
-			return result;
-		}
-		// 检查文件后缀
-		String suffix = getTypeByName(fileItem.getName());
-		if (suffix == null || !suffix.equalsIgnoreCase("xls")) {
-			throw new Exception("Error file type.");
-		}
-		// 读取文件
-		POIFSFileSystem fs = new POIFSFileSystem(fileItem.getInputStream());
-		HSSFWorkbook wb = new HSSFWorkbook(fs);
-		// 获取第一个sheet
-		HSSFSheet sheet = wb.getSheetAt(0);
-		// 验证有误数据
-		if (sheet == null || sheet.getLastRowNum() < 1) {
-			return result;
-		}
-		// 找到第一行
-		HSSFRow row = sheet.getRow(0);
-		// check columnNum
-		List<ExcelObjectMapperDO> absence = mapperStrategy.getAbsenceExcelColumn();
-		if (!absence.isEmpty()) {
-			// 根据字段名称找列号
-			Iterator<?> it = row.cellIterator();
-			for (int i = 0; it.hasNext(); i++) {
-				HSSFCell cell = (HSSFCell) it.next();
-				for (ExcelObjectMapperDO eom : mapperStrategy.getMapperDOs()) {
-					if (eom.getExcelColumnName().equals(getCellStringValue(cell))) {
-						eom.setExcelColumnNum(i);
-						break;
-					}
-				}
-			}
-			absence = mapperStrategy.getAbsenceExcelColumn();
-		}
-
-		// 验证所有列明是否存在
-		if (absence.size() > 0) {
-			throw new Exception("required column [" + absence.toString() + "]");
-		}
-		// 抽取指定字段的数据
-		int maxRowNum = sheet.getLastRowNum();
-		for (int i = 1; i <= maxRowNum; i++) {
-			row = sheet.getRow(i);
-			if (row == null) {
-				continue;
-			}
-
-			T t = fill(row, mapperStrategy);
-			result.add(t);
-
-		}
-
-		return result;
-	}
-
-	private static String getTypeByName(String fileName) {
+	/**
+	 * 得到文件后缀
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	private static String getFileSuffix(String fileName) {
 		if (fileName == null) {
 			return fileName;
 		}

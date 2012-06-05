@@ -35,7 +35,8 @@ public class EasyExcelTest extends BaseTest {
 		String path = this.getClass().getResource("/").getPath();
 		FileItem fileItem = createFileItem(path, "test1.xls");
 
-		List<EeUser> list = EasyExcel.export(fileItem, strategy);
+		EasyExcel ee = new EasyExcel(fileItem, strategy);
+		List<EeUser> list = ee.export();
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
 
