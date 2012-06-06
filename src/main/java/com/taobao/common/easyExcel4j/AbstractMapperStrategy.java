@@ -26,7 +26,6 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 		} else {
 			AbstractMapperStrategy.getThreadLocal().get(clazz).clear();
 		}
-		init();
 	}
 
 	protected static <T> void add(Class<T> clazz, ExcelObjectMapperDO eom) {
@@ -68,11 +67,10 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 	public <T> T getTargetObject() throws Exception {
 		return (T) this.clazz.newInstance();
 	}
-	
+
 	@Override
 	public void clean() {
 		threadLocalMap.remove();
 	}
 
-	protected abstract void init();
 }

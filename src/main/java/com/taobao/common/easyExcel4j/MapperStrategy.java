@@ -12,8 +12,6 @@ public interface MapperStrategy {
 
 	<T> T getTargetObject() throws Exception;
 	
-	void intExcelObjectMapperDO(ExcelObjectMapperDO eom, String excelColumnName, int excelColumnNum);
-	
 	void clean();
 
 }

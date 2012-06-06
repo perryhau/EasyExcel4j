@@ -14,15 +14,16 @@ public class DynamicMapperTest extends BaseTest {
 
 	@Test
 	public void testAbsence_1() throws Exception {
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class,
+				fileItem);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
 
 		user.setDescription(strategy.anyString("不存在的"));
+		strategy.generic();
 
-		EasyExcel ee = new EasyExcel(fileItem, strategy);
-		List<ExcelObjectMapperDO> list = ee.getAbsenceExcelColumn();
+		List<ExcelObjectMapperDO> list = strategy.getAbsenceExcelColumn();
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
@@ -30,15 +31,15 @@ public class DynamicMapperTest extends BaseTest {
 
 	@Test
 	public void testAbsence_2() throws Exception {
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class,
+				fileItem);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
 
 		user.setDescription(strategy.anyString("不存在的", false));
 
-		EasyExcel ee = new EasyExcel(fileItem, strategy);
-		List<ExcelObjectMapperDO> list = ee.getAbsenceExcelColumn();
+		List<ExcelObjectMapperDO> list = strategy.getAbsenceExcelColumn();
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(0, list.size());
@@ -47,7 +48,8 @@ public class DynamicMapperTest extends BaseTest {
 	@Test
 	public void testDynamicMapperStrategy() throws Exception {
 
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class,
+				fileItem);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
@@ -59,6 +61,7 @@ public class DynamicMapperTest extends BaseTest {
 		user.setBirth(strategy.anyDate("出生日期"));
 		user.setSalary(strategy.anyDouble("工资"));
 
+		strategy.generic();
 		EasyExcel ee = new EasyExcel(fileItem, strategy);
 		List<EeUser> list = ee.export();
 		Assert.assertNotNull(list);

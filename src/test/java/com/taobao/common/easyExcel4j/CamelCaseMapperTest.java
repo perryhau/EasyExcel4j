@@ -1,6 +1,8 @@
 package com.taobao.common.easyExcel4j;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -15,7 +17,11 @@ public class CamelCaseMapperTest extends BaseTest {
 	@Test
 	public void testDynamicMapperStrategy() throws Exception {
 
-		MapperStrategy strategy = MapperStrategyFactory.getInstance().getCamelCaseMapperStrategy(EeUser.class);
+		CamelCaseMapperStrategy strategy = MapperStrategyFactory.getInstance().getCamelCaseMapperStrategy(EeUser.class, fileItem);
+		Map<String, Boolean> valueMap = new HashMap<String, Boolean>();
+		valueMap.put("ÄÐ", true);
+		valueMap.put("Å®", false);
+		strategy.intExcelObjectMapperDO("gender", valueMap);
 		EasyExcel ee = new EasyExcel(fileItem, strategy);
 		List<EeUser> list = ee.export();
 		Assert.assertNotNull(list);

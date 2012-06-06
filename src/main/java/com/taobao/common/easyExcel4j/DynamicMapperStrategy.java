@@ -2,12 +2,26 @@ package com.taobao.common.easyExcel4j;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+
+import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
 
 public class DynamicMapperStrategy extends AbstractMapperStrategy {
 
-	public <T> DynamicMapperStrategy(Class<T> clazz) {
+	private FileItem fileItem;
+
+	private <T> DynamicMapperStrategy(Class<T> clazz) {
 		super(clazz);
+	}
+
+	public <T> DynamicMapperStrategy(Class<T> clazz, FileItem fileItem) {
+		super(clazz);
+		this.fileItem = fileItem;
 	}
 
 	public <T> T getInstance() {
@@ -127,15 +141,18 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 		return null;
 	}
 
-	@Override
-	protected void init() {
-
-	}
-
-	@Override
-	public void intExcelObjectMapperDO(ExcelObjectMapperDO eom, String excelColumnName, int excelColumnNum) {
-		if (eom.getExcelColumnName().equals(excelColumnName)) {
-			eom.setExcelColumnNum(excelColumnNum);
+	public void generic() throws Exception {
+		// 找到第一行
+		HSSFRow row = EasyExcelUtils.getRow(fileItem, 0, 0);
+		// 根据字段名称找列号
+		Iterator<?> it = row.cellIterator();
+		for (int i = 0; it.hasNext(); i++) {
+			HSSFCell cell = (HSSFCell) it.next();
+			for (ExcelObjectMapperDO eom : getMapperDOs()) {
+				if (eom.getExcelColumnName().equals(EasyExcelUtils.getCellStringValue(cell))) {
+					eom.setExcelColumnNum(i);
+				}
+			}
 		}
 	}
 

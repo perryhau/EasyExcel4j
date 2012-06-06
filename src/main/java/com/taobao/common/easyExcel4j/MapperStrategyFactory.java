@@ -1,5 +1,7 @@
 package com.taobao.common.easyExcel4j;
 
+import org.apache.commons.fileupload.FileItem;
+
 public class MapperStrategyFactory {
 
 	private static class SingletonHolder {
@@ -14,16 +16,16 @@ public class MapperStrategyFactory {
 		return SingletonHolder.instance;
 	}
 
-	public <T> MapperStrategy getCamelCaseMapperStrategy(Class<T> clazz) {
-		return new CamelCaseMapperStrategy(clazz);
+	public <T> CamelCaseMapperStrategy getCamelCaseMapperStrategy(Class<T> clazz, FileItem fileItem) throws Exception {
+		return new CamelCaseMapperStrategy(clazz, fileItem);
 	}
 
 	public <T> DefaultMapperStrategy getDefaultMapperStrategy(Class<T> clazz) {
 		return new DefaultMapperStrategy(clazz);
 	}
 
-	public <T> DynamicMapperStrategy getDynamicMapperStrategy(Class<T> clazz) {
-		return new DynamicMapperStrategy(clazz);
+	public <T> DynamicMapperStrategy getDynamicMapperStrategy(Class<T> clazz, FileItem fileItem) {
+		return new DynamicMapperStrategy(clazz, fileItem);
 	}
 
 }
