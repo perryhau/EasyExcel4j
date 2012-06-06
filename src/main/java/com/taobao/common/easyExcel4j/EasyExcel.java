@@ -17,15 +17,7 @@ import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
 
 public class EasyExcel {
 
-	private FileItem fileItem;
-	private MapperStrategy mapperStrategy;
-
-	public EasyExcel(FileItem fileItem, MapperStrategy mapperStrategy) {
-		this.fileItem = fileItem;
-		this.mapperStrategy = mapperStrategy;
-	}
-
-	public <T> List<T> export() throws Exception {
+	public static <T> List<T> export(FileItem fileItem, MapperStrategy mapperStrategy) throws Exception {
 		try {
 			List<T> result = new ArrayList<T>();
 			// ¼ì²éÈ±Ê¡µÄExcel column
@@ -64,7 +56,7 @@ public class EasyExcel {
 	 * @throws Exception
 	 */
 	private static <T> T fill(HSSFRow row, MapperStrategy mapperStrategy) throws Exception {
-		T t = mapperStrategy.getTargetObject();
+		T t = mapperStrategy.newInstance();
 		for (ExcelObjectMapperDO eom : mapperStrategy.getMapperDOs()) {
 
 			if (!eom.isRequired() && eom.getExcelColumnNum() == null) {

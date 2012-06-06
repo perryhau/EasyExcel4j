@@ -27,6 +27,8 @@ public class DynamicMapperTest extends BaseTest {
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
+		
+		strategy.clean();
 	}
 
 	@Test
@@ -43,6 +45,8 @@ public class DynamicMapperTest extends BaseTest {
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(0, list.size());
+		
+		strategy.clean();
 	}
 
 	@Test
@@ -62,8 +66,7 @@ public class DynamicMapperTest extends BaseTest {
 		user.setSalary(strategy.anyDouble("¹¤×Ê"));
 
 		strategy.generic();
-		EasyExcel ee = new EasyExcel(fileItem, strategy);
-		List<EeUser> list = ee.export();
+		List<EeUser> list = EasyExcel.export(fileItem, strategy);
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
 

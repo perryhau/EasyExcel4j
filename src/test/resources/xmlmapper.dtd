@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE xmlmapper [
+  <!ELEMENT xmlmapper (mapper*)>
+  <!ELEMENT mapper (column*)>
+  <!ATTLIST mapper class CDATA #REQUIRED>
+  
+  <!ELEMENT column EMPTY>
+  <!ATTLIST column columnName CDATA #REQUIRED>
+  <!ATTLIST column columnNum CDATA #IMPLIED>
+  <!ATTLIST column fieldName CDATA #REQUIRED>
+  <!ATTLIST column required (true|false) #IMPLIED>
+]>

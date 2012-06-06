@@ -1,7 +1,6 @@
 package com.taobao.common.easyExcel4j;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 public class ExcelObjectMapperDO implements Serializable {
@@ -10,7 +9,6 @@ public class ExcelObjectMapperDO implements Serializable {
 
 	private String objectFieldName;
 	private Class<?> objectFieldType;
-	private Method method;
 	private String excelColumnName;
 	private Integer excelColumnNum;
 	private boolean required;
@@ -47,14 +45,6 @@ public class ExcelObjectMapperDO implements Serializable {
 
 	public void setRequired(boolean required) {
 		this.required = required;
-	}
-
-	public Method getMethod() {
-		return method;
-	}
-
-	public void setMethod(Method method) {
-		this.method = method;
 	}
 
 	public Class<?> getObjectFieldType() {

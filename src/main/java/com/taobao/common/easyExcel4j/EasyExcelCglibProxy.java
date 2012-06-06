@@ -1,6 +1,7 @@
 package com.taobao.common.easyExcel4j;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -16,9 +17,9 @@ public class EasyExcelCglibProxy implements MethodInterceptor {
 
 	@Override
 	public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-		ExcelObjectMapperDO eom = AbstractMapperStrategy.getThreadLocal().get(clazz).getLast();
+		List<ExcelObjectMapperDO> list = AbstractMapperStrategy.getMapperDOs(clazz);
+		ExcelObjectMapperDO eom = list.get(list.size() > 0 ? (list.size() - 1) : 0);
 		if (eom != null) {
-			eom.setMethod(method);
 			eom.setObjectFieldName(toLowerCaseInitial(method.getName().substring(3), true));
 		}
 		return proxy.invokeSuper(obj, args);

@@ -1,44 +1,45 @@
 package com.taobao.common.easyExcel4j;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.fileupload.FileItem;
+
 public abstract class AbstractMapperStrategy implements MapperStrategy {
 
+	private static final ThreadLocal<Map<Class<?>, List<ExcelObjectMapperDO>>> threadLocalMap = new ThreadLocal<Map<Class<?>, List<ExcelObjectMapperDO>>>();
+
 	protected Class<?> clazz;
+	protected FileItem fileItem;
 
-	private static final ThreadLocal<LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>>> threadLocalMap = new ThreadLocal<LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>>>();
-
-	protected static LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>> getThreadLocal() {
-		if (threadLocalMap.get() == null) {
-			threadLocalMap.set(new LinkedHashMap<Class<?>, LinkedList<ExcelObjectMapperDO>>());
-		}
-		return threadLocalMap.get();
+	public <T> AbstractMapperStrategy(Class<T> clazz, FileItem fileItem) {
+		this.clazz = clazz;
+		this.fileItem = fileItem;
 	}
 
-	public <T> AbstractMapperStrategy(Class<T> clazz) {
-		this.clazz = clazz;
-		if (!AbstractMapperStrategy.getThreadLocal().containsKey(clazz)) {
-			AbstractMapperStrategy.getThreadLocal().put(clazz, new LinkedList<ExcelObjectMapperDO>());
-		} else {
-			AbstractMapperStrategy.getThreadLocal().get(clazz).clear();
+	protected static List<ExcelObjectMapperDO> getMapperDOs(Class<?> clazz) {
+		Map<Class<?>, List<ExcelObjectMapperDO>> map = threadLocalMap.get();
+		if (map == null) {
+			map = new HashMap<Class<?>, List<ExcelObjectMapperDO>>();
+			threadLocalMap.set(map);
 		}
+		List<ExcelObjectMapperDO> mappers = map.get(clazz);
+		if (mappers == null) {
+			mappers = new ArrayList<ExcelObjectMapperDO>();
+			map.put(clazz, mappers);
+		}
+		return mappers;
 	}
 
 	protected static <T> void add(Class<T> clazz, ExcelObjectMapperDO eom) {
-		getThreadLocal().get(clazz).add(eom);
+		getMapperDOs(clazz).add(eom);
 	}
 
 	@Override
 	public ExcelObjectMapperDO get(int excelColumnNum) throws Exception {
-		Map<Class<?>, LinkedList<ExcelObjectMapperDO>> mappers = AbstractMapperStrategy.getThreadLocal();
-		if (mappers == null || !mappers.containsKey(clazz)) {
-			throw new Exception("Can't find excel mapping.");
-		}
-		for (ExcelObjectMapperDO mapper : mappers.get(clazz)) {
+		for (ExcelObjectMapperDO mapper : getMapperDOs(clazz)) {
 			if (mapper.getExcelColumnNum() == excelColumnNum) {
 				return mapper;
 			}
@@ -48,7 +49,7 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 
 	@Override
 	public List<ExcelObjectMapperDO> getMapperDOs() {
-		return AbstractMapperStrategy.getThreadLocal().get(clazz);
+		return getMapperDOs(clazz);
 	}
 
 	@Override
@@ -64,13 +65,23 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getTargetObject() throws Exception {
+	public <T> T newInstance() throws Exception {
 		return (T) this.clazz.newInstance();
 	}
 
 	@Override
 	public void clean() {
 		threadLocalMap.remove();
+	}
+	
+	@Override
+	public void intValueMap(String objectFieldName, Map<String, ?> valueMap) {
+		for (ExcelObjectMapperDO eom : getMapperDOs()) {
+			if (eom.getObjectFieldName().equals(objectFieldName)) {
+				eom.setValueMap(valueMap);
+				break;
+			}
+		}
 	}
 
 }

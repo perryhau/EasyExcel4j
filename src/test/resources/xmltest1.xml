@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<xmlmapper
+xmlns="http://www.w3school.com.cn"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.w3school.com.cn xmlmapper.xsd">
+	<mapper class="com.taobao.common.easyExcel4j.EeUser">
+		<column columnName="姓名" fieldName="userName"/>
+		<column columnName="性别" fieldName="gender"/>
+		<column columnName="年龄" fieldName="age"/>
+		<column columnName="手机" fieldName="phone"/>
+		<column columnName="出生日期" fieldName="birth"/>
+		<column columnName="工资" fieldName="salary"/>
+	</mapper>
+</xmlmapper>

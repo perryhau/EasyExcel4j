@@ -2,7 +2,6 @@ package com.taobao.common.easyExcel4j;
 
 import java.lang.reflect.Field;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -10,14 +9,17 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 
 import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
 
+/**
+ * 驼峰映射法<br>
+ * 将Excel第一行的列名称, 通过驼峰计算后, 与指定对象相同的属性名称匹配<br>
+ * 默认所有属性都是required=false
+ * 
+ * @author feiying.gh
+ */
 public class CamelCaseMapperStrategy extends AbstractMapperStrategy {
 
-	private <T> CamelCaseMapperStrategy(Class<T> clazz) {
-		super(clazz);
-	}
-
 	public <T> CamelCaseMapperStrategy(Class<T> clazz, FileItem fileItem) throws Exception {
-		super(clazz);
+		super(clazz, fileItem);
 		Field[] fields = clazz.getDeclaredFields();
 		if (fields == null || fields.length == 0) {
 			return;
@@ -27,6 +29,7 @@ public class CamelCaseMapperStrategy extends AbstractMapperStrategy {
 			ExcelObjectMapperDO eom = new ExcelObjectMapperDO();
 			eom.setObjectFieldName(field.getName());
 			eom.setObjectFieldType(field.getType());
+			eom.setRequired(false);
 			add(clazz, eom);
 		}
 
@@ -41,16 +44,8 @@ public class CamelCaseMapperStrategy extends AbstractMapperStrategy {
 						.equals(EasyExcelUtils.toCamelCase(EasyExcelUtils.getCellStringValue(cell)))) {
 					eom.setExcelColumnName(EasyExcelUtils.getCellStringValue(cell));
 					eom.setExcelColumnNum(i);
+					break;
 				}
-			}
-		}
-	}
-
-	public void intExcelObjectMapperDO(String objectFieldName, Map<String, ?> valueMap) {
-		for (ExcelObjectMapperDO eom : getMapperDOs()) {
-			if (eom.getObjectFieldName().equals(objectFieldName)) {
-				eom.setValueMap(valueMap);
-				break;
 			}
 		}
 	}

@@ -10,18 +10,21 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
-public class CamelCaseMapperTest extends BaseTest {
+public class XmlMapperTest extends BaseTest {
 
-	private FileItem fileItem = createFileItem(this.getClass().getResource("/").getPath(), "CamelCaseMapperTest.xls");
+	private FileItem fileItem = createFileItem(this.getClass().getResource("/").getPath(), "XmlMapperTest.xls");
 
 	@Test
 	public void testDynamicMapperStrategy() throws Exception {
 
-		CamelCaseMapperStrategy strategy = MapperStrategyFactory.getInstance().getCamelCaseMapperStrategy(EeUser.class, fileItem);
+		String path = this.getClass().getResource("/").getPath() + "xmltest1.xml";
+		XmlMapperStrategy strategy = MapperStrategyFactory.getInstance().getXmlMapperStrategy(EeUser.class, fileItem,
+				path);
 		Map<String, Boolean> valueMap = new HashMap<String, Boolean>();
 		valueMap.put("ÄÐ", true);
 		valueMap.put("Å®", false);
 		strategy.intValueMap("gender", valueMap);
+		
 		List<EeUser> list = EasyExcel.export(fileItem, strategy);
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());

@@ -11,17 +11,16 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 
 import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
 
+/**
+ * 动态规则匹配法<br>
+ * 通过set()方法来建立excel的列与object的属性之间的对应关系
+ * 
+ * @author feiying.gh
+ */
 public class DynamicMapperStrategy extends AbstractMapperStrategy {
 
-	private FileItem fileItem;
-
-	private <T> DynamicMapperStrategy(Class<T> clazz) {
-		super(clazz);
-	}
-
 	public <T> DynamicMapperStrategy(Class<T> clazz, FileItem fileItem) {
-		super(clazz);
-		this.fileItem = fileItem;
+		super(clazz, fileItem);
 	}
 
 	public <T> T getInstance() {

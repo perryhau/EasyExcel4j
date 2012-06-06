@@ -20,12 +20,17 @@ public class MapperStrategyFactory {
 		return new CamelCaseMapperStrategy(clazz, fileItem);
 	}
 
-	public <T> DefaultMapperStrategy getDefaultMapperStrategy(Class<T> clazz) {
-		return new DefaultMapperStrategy(clazz);
+	public <T> DefaultMapperStrategy getDefaultMapperStrategy(Class<T> clazz, FileItem fileItem) {
+		return new DefaultMapperStrategy(clazz, fileItem);
 	}
 
 	public <T> DynamicMapperStrategy getDynamicMapperStrategy(Class<T> clazz, FileItem fileItem) {
 		return new DynamicMapperStrategy(clazz, fileItem);
+	}
+
+	public <T> XmlMapperStrategy getXmlMapperStrategy(Class<T> clazz, FileItem fileItem, String... xmlPath)
+			throws Exception {
+		return new XmlMapperStrategy(clazz, fileItem, xmlPath);
 	}
 
 }
