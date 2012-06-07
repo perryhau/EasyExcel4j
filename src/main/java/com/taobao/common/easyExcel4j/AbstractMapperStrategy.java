@@ -1,11 +1,12 @@
 package com.taobao.common.easyExcel4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public abstract class AbstractMapperStrategy implements MapperStrategy {
 
@@ -22,12 +23,12 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 	protected static List<ExcelObjectMapperDO> getMapperDOs(Class<?> clazz) {
 		Map<Class<?>, List<ExcelObjectMapperDO>> map = threadLocalMap.get();
 		if (map == null) {
-			map = new HashMap<Class<?>, List<ExcelObjectMapperDO>>();
+			map = Maps.newHashMap();
 			threadLocalMap.set(map);
 		}
 		List<ExcelObjectMapperDO> mappers = map.get(clazz);
 		if (mappers == null) {
-			mappers = new ArrayList<ExcelObjectMapperDO>();
+			mappers = Lists.newArrayList();
 			map.put(clazz, mappers);
 		}
 		return mappers;
@@ -54,7 +55,7 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 
 	@Override
 	public List<ExcelObjectMapperDO> getAbsenceExcelColumn() {
-		List<ExcelObjectMapperDO> absenceList = new ArrayList<ExcelObjectMapperDO>();
+		List<ExcelObjectMapperDO> absenceList = Lists.newArrayList();
 		for (ExcelObjectMapperDO eom : getMapperDOs()) {
 			if (eom.isRequired() && eom.getExcelColumnNum() == null) {
 				absenceList.add(eom);
@@ -73,7 +74,7 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 	public void clean() {
 		threadLocalMap.remove();
 	}
-	
+
 	@Override
 	public void intValueMap(String objectFieldName, Map<String, ?> valueMap) {
 		for (ExcelObjectMapperDO eom : getMapperDOs()) {

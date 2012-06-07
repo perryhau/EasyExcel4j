@@ -82,7 +82,7 @@ public class EasyExcel {
 						continue;
 					}
 					if (fieldType.getSimpleName().equalsIgnoreCase("boolean")) {
-						if (eom.getValueMap() != null && !eom.getValueMap().isEmpty()) {
+						if (!eom.getValueMap().isEmpty()) {
 							Map<String, ?> valueMap = eom.getValueMap();
 							boolean value = (Boolean) valueMap.get(EasyExcelUtils.getCellStringValue(cell));
 							BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),

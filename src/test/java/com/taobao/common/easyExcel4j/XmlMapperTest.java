@@ -1,8 +1,6 @@
 package com.taobao.common.easyExcel4j;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -20,11 +18,7 @@ public class XmlMapperTest extends BaseTest {
 		String path = this.getClass().getResource("/").getPath() + "xmltest1.xml";
 		XmlMapperStrategy strategy = MapperStrategyFactory.getInstance().getXmlMapperStrategy(EeUser.class, fileItem,
 				path);
-		Map<String, Boolean> valueMap = new HashMap<String, Boolean>();
-		valueMap.put("ÄÐ", true);
-		valueMap.put("Å®", false);
-		strategy.intValueMap("gender", valueMap);
-		
+
 		List<EeUser> list = EasyExcel.export(fileItem, strategy);
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());

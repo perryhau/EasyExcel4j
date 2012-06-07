@@ -1,7 +1,6 @@
 package com.taobao.common.easyExcel4j;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -9,6 +8,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 
+import com.google.common.collect.Maps;
 import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
 
 /**
@@ -123,7 +123,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	public boolean anyBoolean(String columnName, String isTrueString, String isFalseString, boolean required) {
-		Map<String, Boolean> map = new HashMap<String, Boolean>();
+		Map<String, Boolean> map = Maps.newHashMap();
 		map.put(isTrueString, Boolean.TRUE);
 		map.put(isFalseString, Boolean.FALSE);
 		add(columnName, required, Boolean.class).setValueMap(map);

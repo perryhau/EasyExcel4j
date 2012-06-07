@@ -3,6 +3,8 @@ package com.taobao.common.easyExcel4j;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 public class ExcelObjectMapperDO implements Serializable {
 
 	private static final long serialVersionUID = 7745296502632710593L;
@@ -13,7 +15,7 @@ public class ExcelObjectMapperDO implements Serializable {
 	private Integer excelColumnNum;
 	private boolean required;
 
-	private Map<String, ?> valueMap = null;
+	private Map<String, ?> valueMap = Maps.newHashMap();
 
 	public String getObjectFieldName() {
 		return objectFieldName;

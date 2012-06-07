@@ -1,8 +1,9 @@
 package com.taobao.common.easyExcel4j;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public class ExcelObjectMapper implements Serializable {
 
@@ -10,7 +11,7 @@ public class ExcelObjectMapper implements Serializable {
 
 	private Class<?> clazz;
 
-	private List<ExcelObjectMapperDO> list = new ArrayList<ExcelObjectMapperDO>();
+	private List<ExcelObjectMapperDO> list = Lists.newArrayList();
 
 	public Class<?> getClazz() {
 		return clazz;

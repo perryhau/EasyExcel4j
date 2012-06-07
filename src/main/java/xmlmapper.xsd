@@ -18,10 +18,19 @@ elementFormDefault="qualified">
   </xs:element>
   <xs:element name="column">
     <xs:complexType>
-      <xs:attribute name="columnName" use="required" type="xs:NCName"/>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="val"/>
+      </xs:sequence>
+      <xs:attribute name="columnName" use="required" type="xs:string"/>
       <xs:attribute name="columnNum" use="required" type="xs:integer"/>
-      <xs:attribute name="fieldName" use="required" type="xs:NCName"/>
+      <xs:attribute name="fieldName" use="required" type="xs:string"/>
       <xs:attribute name="required" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="val">
+    <xs:complexType>
+      <xs:attribute name="key" use="required" type="xs:string"/>
+      <xs:attribute name="value" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
 </xs:schema>

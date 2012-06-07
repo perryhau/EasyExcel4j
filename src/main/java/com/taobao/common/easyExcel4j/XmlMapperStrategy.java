@@ -3,6 +3,7 @@ package com.taobao.common.easyExcel4j;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -11,6 +12,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.google.common.collect.Maps;
 import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
 
 /**
@@ -51,7 +53,21 @@ public class XmlMapperStrategy extends AbstractMapperStrategy {
 					eom.setExcelColumnName(columnName);
 					eom.setObjectFieldName(fieldName);
 					eom.setRequired(Boolean.valueOf(required));
-					eom.setObjectFieldType(temClass.getDeclaredField(fieldName).getType());
+
+					Class<?> type = temClass.getDeclaredField(fieldName).getType();
+					eom.setObjectFieldType(type);
+
+					if (type.getSimpleName().equalsIgnoreCase("boolean")) {
+						Map<String, Boolean> valueMap = Maps.newHashMap();
+						for (Iterator<?> valIt = columnElm.elementIterator(); valIt.hasNext();) {
+							Element valElm = (Element) valIt.next();
+							String name = valElm.attributeValue("key");
+							String value = valElm.attributeValue("value");
+							valueMap.put(name, Boolean.valueOf(value));
+						}
+						eom.setValueMap(valueMap);
+					}
+
 				}
 			}
 		}
