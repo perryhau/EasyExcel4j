@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.w3school.com.cn"  
+elementFormDefault="qualified">
+  <xs:element name="xmlmapper">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="mapper"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="mapper">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="column"/>
+      </xs:sequence>
+      <xs:attribute name="class" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="column">
+    <xs:complexType>
+      <xs:attribute name="columnName" use="required" type="xs:NCName"/>
+      <xs:attribute name="columnNum" use="required" type="xs:integer"/>
+      <xs:attribute name="fieldName" use="required" type="xs:NCName"/>
+      <xs:attribute name="required" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
