@@ -16,7 +16,7 @@ public class XmlMapperTest extends BaseTest {
 	public void testDynamicMapperStrategy() throws Exception {
 
 		String path = this.getClass().getResource("/").getPath() + "xmltest1.xml";
-		XmlMapperStrategy strategy = MapperStrategyFactory.getInstance().getXmlMapperStrategy(EeUser.class, fileItem,
+		MapperStrategy strategy = MapperStrategyFactory.getInstance().getXmlMapperStrategy(EeUser.class, fileItem,
 				path);
 
 		List<EeUser> list = EasyExcel.export(fileItem, strategy);

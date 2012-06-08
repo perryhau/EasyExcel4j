@@ -52,8 +52,8 @@ public class DynamicMapperTest extends BaseTest {
 	@Test
 	public void testDynamicMapperStrategy() throws Exception {
 
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class,
-				fileItem);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance()
+			.getDynamicMapperStrategy(EeUser.class,fileItem);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);

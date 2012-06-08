@@ -35,5 +35,23 @@ public class CamelCaseMapperTest extends BaseTest {
 		Assert.assertEquals(100.25d, result.getSalary());
 
 	}
+	
+	@Test
+	public void testDynamicMapperStrategy1() throws Exception {
+
+		MapperStrategy strategy = MapperStrategyFactory.getInstance().getCamelCaseMapperStrategy(EeUser.class, fileItem);
+		List<EeUser> list = EasyExcel.export(fileItem, strategy);
+		Assert.assertNotNull(list);
+		Assert.assertEquals(1, list.size());
+
+		EeUser result = list.get(0);
+		Assert.assertEquals("ÕÅÈý", result.getUserName());
+		Assert.assertEquals(25, result.getAge());
+		Assert.assertEquals(false, result.isGender());
+		Assert.assertEquals(12312341234L, result.getPhone());
+		Assert.assertEquals(DateUtils.parseDate("1985/5/3", new String[] { "yyyy/M/d" }), result.getBirth());
+		Assert.assertEquals(100.25d, result.getSalary());
+
+	}
 
 }
