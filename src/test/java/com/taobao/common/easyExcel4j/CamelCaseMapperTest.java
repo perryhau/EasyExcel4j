@@ -1,6 +1,5 @@
 package com.taobao.common.easyExcel4j;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +9,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
+import com.google.common.collect.Maps;
+
 public class CamelCaseMapperTest extends BaseTest {
 
 	private FileItem fileItem = createFileItem(this.getClass().getResource("/").getPath(), "CamelCaseMapperTest.xls");
@@ -18,7 +19,7 @@ public class CamelCaseMapperTest extends BaseTest {
 	public void testDynamicMapperStrategy() throws Exception {
 
 		CamelCaseMapperStrategy strategy = MapperStrategyFactory.getInstance().getCamelCaseMapperStrategy(EeUser.class, fileItem);
-		Map<String, Boolean> valueMap = new HashMap<String, Boolean>();
+		Map<String, Boolean> valueMap = Maps.newHashMap();
 		valueMap.put("ÄÐ", true);
 		valueMap.put("Å®", false);
 		strategy.intValueMap("gender", valueMap);

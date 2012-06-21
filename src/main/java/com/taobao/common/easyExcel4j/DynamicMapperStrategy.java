@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 
@@ -19,8 +18,10 @@ import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
  */
 public class DynamicMapperStrategy extends AbstractMapperStrategy {
 
-	public <T> DynamicMapperStrategy(Class<T> clazz, FileItem fileItem) {
-		super(clazz, fileItem);
+	private String alias;
+
+	public <T> DynamicMapperStrategy(ExcelConfig config) {
+		super(config.getClazz(), config.getFileItem());
 	}
 
 	public <T> T getInstance() {
@@ -153,6 +154,15 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 				}
 			}
 		}
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		getMapper(clazz).setAlias(alias);
+		this.alias = alias;
 	}
 
 }

@@ -9,6 +9,8 @@ public class ExcelObjectMapper implements Serializable {
 
 	private static final long serialVersionUID = -58483139027577824L;
 
+	private String alias;
+
 	private Class<?> clazz;
 
 	private List<ExcelObjectMapperDO> list = Lists.newArrayList();
@@ -27,6 +29,14 @@ public class ExcelObjectMapper implements Serializable {
 
 	public void setList(List<ExcelObjectMapperDO> list) {
 		this.list = list;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 }

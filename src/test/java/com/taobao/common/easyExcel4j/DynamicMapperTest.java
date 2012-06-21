@@ -14,8 +14,10 @@ public class DynamicMapperTest extends BaseTest {
 
 	@Test
 	public void testAbsence_1() throws Exception {
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class,
-				fileItem);
+		ExcelConfig config = new ExcelConfig();
+		config.setClazz(EeUser.class);
+		config.setFileItem(fileItem);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(config);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
@@ -27,14 +29,16 @@ public class DynamicMapperTest extends BaseTest {
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
-		
+
 		strategy.clean();
 	}
 
 	@Test
 	public void testAbsence_2() throws Exception {
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class,
-				fileItem);
+		ExcelConfig config = new ExcelConfig();
+		config.setClazz(EeUser.class);
+		config.setFileItem(fileItem);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(config);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
@@ -45,15 +49,17 @@ public class DynamicMapperTest extends BaseTest {
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(0, list.size());
-		
+
 		strategy.clean();
 	}
 
 	@Test
 	public void testDynamicMapperStrategy() throws Exception {
 
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance()
-			.getDynamicMapperStrategy(EeUser.class,fileItem);
+		ExcelConfig config = new ExcelConfig();
+		config.setClazz(EeUser.class);
+		config.setFileItem(fileItem);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(config);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
@@ -78,6 +84,19 @@ public class DynamicMapperTest extends BaseTest {
 		Assert.assertEquals(DateUtils.parseDate("1985/5/3", new String[] { "yyyy/M/d" }), result.getBirth());
 		Assert.assertEquals(100.25d, result.getSalary());
 
+	}
+
+	@Test
+	public void testWT() throws Exception {
+		fileItem = createFileItem(this.getClass().getResource("/").getPath(), "合作方范本.xlsx");
+
+		DynamicMapperStrategy strategy1 = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(
+				WanTuGroup.class, fileItem);
+		strategy1.setAlias("图集信息");
+
+		DynamicMapperStrategy strategy2 = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(WanTuInfo.class,
+				fileItem);
+		strategy2.setAlias("图片信息");
 	}
 
 }

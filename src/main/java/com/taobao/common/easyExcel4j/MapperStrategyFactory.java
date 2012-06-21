@@ -24,8 +24,8 @@ public class MapperStrategyFactory {
 		return new DefaultMapperStrategy(clazz, fileItem);
 	}
 
-	public <T> DynamicMapperStrategy getDynamicMapperStrategy(Class<T> clazz, FileItem fileItem) {
-		return new DynamicMapperStrategy(clazz, fileItem);
+	public <T> DynamicMapperStrategy getDynamicMapperStrategy(ExcelConfig config) {
+		return new DynamicMapperStrategy(config);
 	}
 
 	public <T> XmlMapperStrategy getXmlMapperStrategy(Class<T> clazz, FileItem fileItem, String... xmlPath)

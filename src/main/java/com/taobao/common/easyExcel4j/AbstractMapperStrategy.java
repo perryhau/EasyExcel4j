@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 
 public abstract class AbstractMapperStrategy implements MapperStrategy {
 
-	private static final ThreadLocal<Map<Class<?>, List<ExcelObjectMapperDO>>> threadLocalMap = new ThreadLocal<Map<Class<?>, List<ExcelObjectMapperDO>>>();
+	private static final ThreadLocal<Map<Class<?>, ExcelObjectMapper>> threadLocalMap = new ThreadLocal<Map<Class<?>, ExcelObjectMapper>>();
 
 	protected Class<?> clazz;
 	protected FileItem fileItem;
@@ -20,18 +20,22 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 		this.fileItem = fileItem;
 	}
 
-	protected static List<ExcelObjectMapperDO> getMapperDOs(Class<?> clazz) {
-		Map<Class<?>, List<ExcelObjectMapperDO>> map = threadLocalMap.get();
+	protected static ExcelObjectMapper getMapper(Class<?> clazz) {
+		Map<Class<?>, ExcelObjectMapper> map = threadLocalMap.get();
 		if (map == null) {
 			map = Maps.newHashMap();
 			threadLocalMap.set(map);
 		}
-		List<ExcelObjectMapperDO> mappers = map.get(clazz);
-		if (mappers == null) {
-			mappers = Lists.newArrayList();
-			map.put(clazz, mappers);
+		ExcelObjectMapper mapper = map.get(clazz);
+		if (mapper == null) {
+			mapper = new ExcelObjectMapper();
+			map.put(clazz, mapper);
 		}
-		return mappers;
+		return mapper;
+	}
+
+	protected static List<ExcelObjectMapperDO> getMapperDOs(Class<?> clazz) {
+		return getMapper(clazz).getList();
 	}
 
 	protected static <T> void add(Class<T> clazz, ExcelObjectMapperDO eom) {
