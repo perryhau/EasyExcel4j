@@ -9,6 +9,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.log4j.PropertyConfigurator;
+import org.junit.Test;
 
 public class BaseTest {
 
@@ -35,6 +36,11 @@ public class BaseTest {
 			e.printStackTrace();
 		}
 		return item;
+	}
+	
+	@Test
+	public void testApp(){
+		
 	}
 
 }

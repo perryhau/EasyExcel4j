@@ -1,5 +1,7 @@
 package com.taobao.common.easyExcel4j.util;
 
+import java.util.Iterator;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -17,12 +19,33 @@ public class EasyExcelUtils {
 		return getSheet(fileItem, 0);
 	}
 
-	public static HSSFSheet getSheet(FileItem fileItem, int sheetNum) throws Exception {
-		if (fileItem == null) {
-			throw new IllegalArgumentException("Argument is null.");
+	public static HSSFSheet getSheet(FileItem fileItem, int sheetNum)
+			throws Exception {
+		HSSFWorkbook wb = getWorkBook(fileItem);
+		int max = wb.getNumberOfSheets();
+		if (sheetNum >= max) {
+			sheetNum = max - 1;
 		}
 		if (sheetNum < 0) {
 			sheetNum = 0;
+		}
+
+		// 获取sheet
+		return wb.getSheetAt(sheetNum);
+	}
+
+	public static int getSheetNum(FileItem fileItem, String sheetName)
+			throws Exception {
+		if (sheetName == null) {
+			return 0;
+		}
+		HSSFWorkbook wb = getWorkBook(fileItem);
+		return wb.getSheetIndex(sheetName);
+	}
+
+	public static HSSFWorkbook getWorkBook(FileItem fileItem) throws Exception {
+		if (fileItem == null) {
+			throw new IllegalArgumentException("Argument is null.");
 		}
 		// 检查文件后缀
 		String suffix = getFileSuffix(fileItem.getName());
@@ -31,9 +54,7 @@ public class EasyExcelUtils {
 		}
 		// 读取文件
 		POIFSFileSystem fs = new POIFSFileSystem(fileItem.getInputStream());
-		HSSFWorkbook wb = new HSSFWorkbook(fs);
-		// 获取sheet
-		return wb.getSheetAt(sheetNum);
+		return new HSSFWorkbook(fs);
 	}
 
 	public static HSSFRow getRow(HSSFSheet sheet, int rowNum) throws Exception {
@@ -47,10 +68,44 @@ public class EasyExcelUtils {
 		// 找到第一行
 		return sheet.getRow(rowNum);
 	}
+	
+	public static int getRowNum(FileItem fileItem, int sheetNum, String name) throws Exception {
+		HSSFSheet sheet = getSheet(fileItem, sheetNum);
+		HSSFRow row = null;
+		int maxRowNum = sheet.getLastRowNum();
+		for (int i = 0; i <= maxRowNum; i++) {
+			row = sheet.getRow(i);
+			if (row == null) {
+				continue;
+			}
 
-	public static HSSFRow getRow(FileItem fileItem, int sheetNum, int rowNum) throws Exception {
+			String alias = getCellStringValue(row.getCell(0));
+			if(alias != null && alias.equals(name)){
+				return i+1;
+			}
+		}
+		return -1;
+	}
+
+	public static HSSFRow getRow(FileItem fileItem, int sheetNum, int rowNum)
+			throws Exception {
 		HSSFSheet sheet = getSheet(fileItem, sheetNum);
 		return getRow(sheet, rowNum);
+	}
+	
+	public static boolean isNull(HSSFRow row){
+		if(row == null){
+			return true;
+		}
+		Iterator<?> it = row.cellIterator();
+		for (int i = 0; it.hasNext(); i++) {
+			HSSFCell cell = (HSSFCell) it.next();
+			String value = getCellStringValue(cell);
+			if(StringUtils.isNotBlank(value)){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -234,7 +289,8 @@ public class EasyExcelUtils {
 					// 3. wordIndex > index，说明index到wordIndex -
 					// 1处全部是大写，以upperCaseWord处理。
 					if (wordIndex == length || wordIndex > index) {
-						index = parseUpperCaseWord(buffer, str, index, wordIndex);
+						index = parseUpperCaseWord(buffer, str, index,
+								wordIndex);
 					} else {
 						index = parseTitleCaseWord(buffer, str, index);
 					}
@@ -261,7 +317,8 @@ public class EasyExcelUtils {
 			return buffer.toString();
 		}
 
-		private int parseUpperCaseWord(StringBuilder buffer, String str, int index, int length) {
+		private int parseUpperCaseWord(StringBuilder buffer, String str,
+				int index, int length) {
 			char ch = str.charAt(index++);
 
 			// 首字母，必然存在且为大写。
@@ -280,7 +337,8 @@ public class EasyExcelUtils {
 			return index - 1;
 		}
 
-		private int parseLowerCaseWord(StringBuilder buffer, String str, int index) {
+		private int parseLowerCaseWord(StringBuilder buffer, String str,
+				int index) {
 			char ch = str.charAt(index++);
 
 			// 首字母，必然存在且为小写。
@@ -306,7 +364,8 @@ public class EasyExcelUtils {
 			return index - 1;
 		}
 
-		private int parseTitleCaseWord(StringBuilder buffer, String str, int index) {
+		private int parseTitleCaseWord(StringBuilder buffer, String str,
+				int index) {
 			char ch = str.charAt(index++);
 
 			// 首字母，必然存在且为大写。
@@ -359,7 +418,8 @@ public class EasyExcelUtils {
 		}
 
 		protected boolean isDelimiter(char ch) {
-			return !Character.isUpperCase(ch) && !Character.isLowerCase(ch) && !Character.isDigit(ch);
+			return !Character.isUpperCase(ch) && !Character.isLowerCase(ch)
+					&& !Character.isDigit(ch);
 		}
 
 		protected abstract void startSentence(StringBuilder buffer, char ch);

@@ -14,18 +14,14 @@ public class DynamicMapperTest extends BaseTest {
 
 	@Test
 	public void testAbsence_1() throws Exception {
-		ExcelConfig config = new ExcelConfig();
-		config.setClazz(EeUser.class);
-		config.setFileItem(fileItem);
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(config);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
 
 		user.setDescription(strategy.anyString("不存在的"));
-		strategy.generic();
 
-		List<ExcelObjectMapperDO> list = strategy.getAbsenceExcelColumn();
+		List<ExcelObjectMapperDO> list = EasyExcel.getAbsenceExcelColumn(fileItem, strategy);
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
@@ -35,17 +31,14 @@ public class DynamicMapperTest extends BaseTest {
 
 	@Test
 	public void testAbsence_2() throws Exception {
-		ExcelConfig config = new ExcelConfig();
-		config.setClazz(EeUser.class);
-		config.setFileItem(fileItem);
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(config);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
 
 		user.setDescription(strategy.anyString("不存在的", false));
 
-		List<ExcelObjectMapperDO> list = strategy.getAbsenceExcelColumn();
+		List<ExcelObjectMapperDO> list = EasyExcel.getAbsenceExcelColumn(fileItem, strategy);
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(0, list.size());
@@ -55,11 +48,7 @@ public class DynamicMapperTest extends BaseTest {
 
 	@Test
 	public void testDynamicMapperStrategy() throws Exception {
-
-		ExcelConfig config = new ExcelConfig();
-		config.setClazz(EeUser.class);
-		config.setFileItem(fileItem);
-		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(config);
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
 		EeUser user = strategy.getInstance();
 		Assert.assertNotNull(user);
 		Assert.assertTrue(user instanceof EeUser);
@@ -71,7 +60,6 @@ public class DynamicMapperTest extends BaseTest {
 		user.setBirth(strategy.anyDate("出生日期"));
 		user.setSalary(strategy.anyDouble("工资"));
 
-		strategy.generic();
 		List<EeUser> list = EasyExcel.export(fileItem, strategy);
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
@@ -88,15 +76,46 @@ public class DynamicMapperTest extends BaseTest {
 
 	@Test
 	public void testWT() throws Exception {
-		fileItem = createFileItem(this.getClass().getResource("/").getPath(), "合作方范本.xlsx");
+		fileItem = createFileItem(this.getClass().getResource("/").getPath(), "合作方范本.xls");
 
-		DynamicMapperStrategy strategy1 = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(
-				WanTuGroup.class, fileItem);
-		strategy1.setAlias("图集信息");
-
-		DynamicMapperStrategy strategy2 = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(WanTuInfo.class,
-				fileItem);
-		strategy2.setAlias("图片信息");
+		// 所属频道	所属图集	
+		ExcelConfig config_1 = new ExcelConfig(WanTuGroup.class);
+		config_1.setAlias("图集信息");
+		config_1.setMapType(MapperEnum.horizontal);
+		config_1.setRowLength(1);
+		DynamicMapperStrategy strategy_1 = new DynamicMapperStrategy(config_1);
+		WanTuGroup wanTuGroup = strategy_1.getInstance();
+		wanTuGroup.setChannel(strategy_1.anyString("所属频道"));
+		wanTuGroup.setGroup(strategy_1.anyString("所属图集"));
+		
+		List<WanTuGroup> list_1 = EasyExcel.export(fileItem, strategy_1);
+		Assert.assertEquals(1, list_1.size());
+		
+		WanTuGroup wtg = list_1.get(0);
+		Assert.assertEquals("明星", wtg.getChannel());
+		Assert.assertEquals("锋芝复合", wtg.getGroup());
+		
+		//图片描述	图片标签	图片ＵＲＬ	图片商品ＵＲＬ	图片来源
+		ExcelConfig config_2 = new ExcelConfig(WanTuInfo.class);
+		config_2.setAlias("图片信息");
+		DynamicMapperStrategy strategy_2 = new DynamicMapperStrategy(config_2);
+		WanTuInfo wanTuInfo = strategy_2.getInstance();
+		wanTuInfo.setDesc(strategy_2.anyString("图片描述"));
+		wanTuInfo.setFrom(strategy_2.anyString("图片来源"));
+		wanTuInfo.setItemUrl(strategy_2.anyString("图片商品ＵＲＬ"));
+		wanTuInfo.setPicUrl(strategy_2.anyString("图片ＵＲＬ"));
+		wanTuInfo.setTag(strategy_2.anyString("图片标签"));
+		
+		List<WanTuInfo> list_2 = EasyExcel.export(fileItem, strategy_2);
+		
+		Assert.assertEquals(1, list_2.size());
+		
+		WanTuInfo wti = list_2.get(0);
+		Assert.assertEquals("好可爱好可爱好可爱", wti.getDesc());
+		Assert.assertEquals("女装", wti.getTag());
+		Assert.assertEquals("http://img03.taobaocdn.com/imgextra/i3/17577017030820661/T1e7zjXeJkXXXXXXXX_!!397007577-0-pix.jpg", wti.getPicUrl());
+		Assert.assertEquals("http://item.taobao.com/item.htm?spm=161.1000655.0.146&id=1", wti.getItemUrl());
+		Assert.assertEquals("www.lc.com", wti.getFrom());
 	}
 
 }

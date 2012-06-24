@@ -9,19 +9,12 @@ public class ExcelObjectMapper implements Serializable {
 
 	private static final long serialVersionUID = -58483139027577824L;
 
-	private String alias;
+	private ExcelConfig config;
 
-	private Class<?> clazz;
-
+	/**
+	 * 列与属性对应关系
+	 */
 	private List<ExcelObjectMapperDO> list = Lists.newArrayList();
-
-	public Class<?> getClazz() {
-		return clazz;
-	}
-
-	public void setClazz(Class<?> clazz) {
-		this.clazz = clazz;
-	}
 
 	public List<ExcelObjectMapperDO> getList() {
 		return list;
@@ -31,12 +24,12 @@ public class ExcelObjectMapper implements Serializable {
 		this.list = list;
 	}
 
-	public String getAlias() {
-		return alias;
+	public ExcelConfig getConfig() {
+		return config;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setConfig(ExcelConfig config) {
+		this.config = config;
 	}
 
 }

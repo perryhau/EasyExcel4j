@@ -18,8 +18,8 @@ import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
  */
 public class CamelCaseMapperStrategy extends AbstractMapperStrategy {
 
-	public <T> CamelCaseMapperStrategy(Class<T> clazz, FileItem fileItem) throws Exception {
-		super(clazz, fileItem);
+	public <T> CamelCaseMapperStrategy(Class<T> clazz) throws Exception {
+		super(new ExcelConfig(clazz));
 		Field[] fields = clazz.getDeclaredFields();
 		if (fields == null || fields.length == 0) {
 			return;
@@ -32,22 +32,33 @@ public class CamelCaseMapperStrategy extends AbstractMapperStrategy {
 			eom.setRequired(false);
 			add(clazz, eom);
 		}
+	}
 
-		// 找到第一行
-		HSSFRow row = EasyExcelUtils.getRow(fileItem, 0, 0);
-		// 根据字段名称找列号
-		Iterator<?> it = row.cellIterator();
-		for (int i = 0; it.hasNext(); i++) {
-			HSSFCell cell = (HSSFCell) it.next();
-			for (ExcelObjectMapperDO eom : getMapperDOs()) {
-				if (eom.getObjectFieldName()
-						.equals(EasyExcelUtils.toCamelCase(EasyExcelUtils.getCellStringValue(cell)))) {
-					eom.setExcelColumnName(EasyExcelUtils.getCellStringValue(cell));
-					eom.setExcelColumnNum(i);
-					break;
+	@Override
+	public void init(FileItem fileItem) throws Exception {
+		try {
+			// 找到第一行
+			HSSFRow row = EasyExcelUtils.getRow(fileItem, 0, 0);
+			// 根据字段名称找列号
+			Iterator<?> it = row.cellIterator();
+			for (int i = 0; it.hasNext(); i++) {
+				HSSFCell cell = (HSSFCell) it.next();
+				for (ExcelObjectMapperDO eom : getMapperDOs()) {
+					if (eom.getObjectFieldName().equals(
+							EasyExcelUtils.toCamelCase(EasyExcelUtils
+									.getCellStringValue(cell)))) {
+						eom.setExcelColumnName(EasyExcelUtils
+								.getCellStringValue(cell));
+						eom.setExcelColumnNum(i);
+						break;
+					}
 				}
 			}
+		} catch (Exception e) {
+			clean();
+			throw new Exception("init fileItem error.", e);
 		}
+
 	}
 
 }

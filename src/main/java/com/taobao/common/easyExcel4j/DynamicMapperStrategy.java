@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 
@@ -18,23 +19,26 @@ import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
  */
 public class DynamicMapperStrategy extends AbstractMapperStrategy {
 
-	private String alias;
-
-	public <T> DynamicMapperStrategy(ExcelConfig config) {
-		super(config.getClazz(), config.getFileItem());
+	public <T> DynamicMapperStrategy(Class<T> clazz) {
+		super(new ExcelConfig(clazz));
+	}
+	
+	public DynamicMapperStrategy(ExcelConfig config){
+		super(config);
 	}
 
 	public <T> T getInstance() {
-		EasyExcelCglibProxy proxy = new EasyExcelCglibProxy(clazz);
+		EasyExcelCglibProxy proxy = new EasyExcelCglibProxy(config.getClazz());
 		return proxy.getProxyInstance();
 	}
 
-	private ExcelObjectMapperDO add(String columnName, boolean required, Class<?> type) {
+	private ExcelObjectMapperDO add(String columnName, boolean required,
+			Class<?> type) {
 		ExcelObjectMapperDO eom = new ExcelObjectMapperDO();
 		eom.setExcelColumnName(columnName);
 		eom.setRequired(required);
 		eom.setObjectFieldType(type);
-		add(clazz, eom);
+		add(config.getClazz(), eom);
 		return eom;
 	}
 
@@ -119,11 +123,13 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	// Boolean
-	public boolean anyBoolean(String columnName, String isTrueString, String isFalseString) {
+	public boolean anyBoolean(String columnName, String isTrueString,
+			String isFalseString) {
 		return anyBoolean(columnName, isTrueString, isFalseString, true);
 	}
 
-	public boolean anyBoolean(String columnName, String isTrueString, String isFalseString, boolean required) {
+	public boolean anyBoolean(String columnName, String isTrueString,
+			String isFalseString, boolean required) {
 		Map<String, Boolean> map = Maps.newHashMap();
 		map.put(isTrueString, Boolean.TRUE);
 		map.put(isFalseString, Boolean.FALSE);
@@ -141,28 +147,32 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 		return null;
 	}
 
-	public void generic() throws Exception {
-		// 找到第一行
-		HSSFRow row = EasyExcelUtils.getRow(fileItem, 0, 0);
-		// 根据字段名称找列号
-		Iterator<?> it = row.cellIterator();
-		for (int i = 0; it.hasNext(); i++) {
-			HSSFCell cell = (HSSFCell) it.next();
-			for (ExcelObjectMapperDO eom : getMapperDOs()) {
-				if (eom.getExcelColumnName().equals(EasyExcelUtils.getCellStringValue(cell))) {
-					eom.setExcelColumnNum(i);
+	@Override
+	public void init(FileItem fileItem) throws Exception {
+		try {
+			
+			// 找到第一行
+			HSSFRow row = EasyExcelUtils.getRow(fileItem, config.sheetNum(fileItem), config.startRowNum(fileItem));
+			// 根据字段名称找列号
+			Iterator<?> it = row.cellIterator();
+			for (int i = 0; it.hasNext(); i++) {
+				HSSFCell cell = (HSSFCell) it.next();
+				for (ExcelObjectMapperDO eom : getMapperDOs()) {
+					if (eom.getExcelColumnName().equals(
+							EasyExcelUtils.getCellStringValue(cell))) {
+						if(config.getMapType().getValue() == MapperEnum.horizontal.getValue()){
+							eom.setExcelColumnNum(i+1);
+						} else if (config.getMapType().getValue() == MapperEnum.vertical.getValue()){
+							eom.setExcelColumnNum(i);
+						}
+						
+					}
 				}
 			}
+		} catch (Exception e) {
+			clean();
+			throw new Exception("init fileItem error.", e);
 		}
-	}
-
-	public String getAlias() {
-		return alias;
-	}
-
-	public void setAlias(String alias) {
-		getMapper(clazz).setAlias(alias);
-		this.alias = alias;
 	}
 
 }

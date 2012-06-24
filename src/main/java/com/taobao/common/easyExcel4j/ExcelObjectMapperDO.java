@@ -9,12 +9,29 @@ public class ExcelObjectMapperDO implements Serializable {
 
 	private static final long serialVersionUID = 7745296502632710593L;
 
+	/**
+	 * 对应类的属性
+	 */
 	private String objectFieldName;
+	/**
+	 * 对应类属性的类型
+	 */
 	private Class<?> objectFieldType;
+	/**
+	 * 对应Excel的列名
+	 */
 	private String excelColumnName;
+	/**
+	 * 对应Excel的列号
+	 */
 	private Integer excelColumnNum;
+	/**
+	 * Excel列是否必须
+	 */
 	private boolean required;
-
+	/**
+	 * 特殊值对应关系
+	 */
 	private Map<String, ?> valueMap = Maps.newHashMap();
 
 	public String getObjectFieldName() {

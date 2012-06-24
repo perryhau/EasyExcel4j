@@ -3,21 +3,17 @@ package com.taobao.common.easyExcel4j;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.fileupload.FileItem;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public abstract class AbstractMapperStrategy implements MapperStrategy {
 
 	private static final ThreadLocal<Map<Class<?>, ExcelObjectMapper>> threadLocalMap = new ThreadLocal<Map<Class<?>, ExcelObjectMapper>>();
-
-	protected Class<?> clazz;
-	protected FileItem fileItem;
-
-	public <T> AbstractMapperStrategy(Class<T> clazz, FileItem fileItem) {
-		this.clazz = clazz;
-		this.fileItem = fileItem;
+	
+	protected ExcelConfig config;
+	
+	public AbstractMapperStrategy(ExcelConfig config) {
+		this.config = config;
 	}
 
 	protected static ExcelObjectMapper getMapper(Class<?> clazz) {
@@ -44,7 +40,7 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 
 	@Override
 	public ExcelObjectMapperDO get(int excelColumnNum) throws Exception {
-		for (ExcelObjectMapperDO mapper : getMapperDOs(clazz)) {
+		for (ExcelObjectMapperDO mapper : getMapperDOs(config.getClazz())) {
 			if (mapper.getExcelColumnNum() == excelColumnNum) {
 				return mapper;
 			}
@@ -54,7 +50,7 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 
 	@Override
 	public List<ExcelObjectMapperDO> getMapperDOs() {
-		return getMapperDOs(clazz);
+		return getMapperDOs(config.getClazz());
 	}
 
 	@Override
@@ -66,12 +62,6 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 			}
 		}
 		return absenceList;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T newInstance() throws Exception {
-		return (T) this.clazz.newInstance();
 	}
 
 	@Override
@@ -87,6 +77,11 @@ public abstract class AbstractMapperStrategy implements MapperStrategy {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public ExcelConfig getConfig() {
+		return config;
 	}
 
 }
