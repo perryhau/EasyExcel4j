@@ -76,9 +76,9 @@ public class DynamicMapperTest extends BaseTest {
 
 	@Test
 	public void testWT() throws Exception {
-		fileItem = createFileItem(this.getClass().getResource("/").getPath(), "合作方范本.xls");
+		fileItem = createFileItem(this.getClass().getResource("/").getPath(), "合作方范本.xlsx");
 
-		// 所属频道	所属图集	
+		// 所属频道 所属图集
 		ExcelConfig config_1 = new ExcelConfig(WanTuGroup.class);
 		config_1.setAlias("图集信息");
 		config_1.setMapType(MapperEnum.horizontal);
@@ -87,15 +87,15 @@ public class DynamicMapperTest extends BaseTest {
 		WanTuGroup wanTuGroup = strategy_1.getInstance();
 		wanTuGroup.setChannel(strategy_1.anyString("所属频道"));
 		wanTuGroup.setGroup(strategy_1.anyString("所属图集"));
-		
+
 		List<WanTuGroup> list_1 = EasyExcel.export(fileItem, strategy_1);
 		Assert.assertEquals(1, list_1.size());
-		
+
 		WanTuGroup wtg = list_1.get(0);
 		Assert.assertEquals("明星", wtg.getChannel());
 		Assert.assertEquals("锋芝复合", wtg.getGroup());
-		
-		//图片描述	图片标签	图片ＵＲＬ	图片商品ＵＲＬ	图片来源
+
+		// 图片描述 图片标签 图片ＵＲＬ 图片商品ＵＲＬ 图片来源
 		ExcelConfig config_2 = new ExcelConfig(WanTuInfo.class);
 		config_2.setAlias("图片信息");
 		DynamicMapperStrategy strategy_2 = new DynamicMapperStrategy(config_2);
@@ -105,15 +105,17 @@ public class DynamicMapperTest extends BaseTest {
 		wanTuInfo.setItemUrl(strategy_2.anyString("图片商品ＵＲＬ"));
 		wanTuInfo.setPicUrl(strategy_2.anyString("图片ＵＲＬ"));
 		wanTuInfo.setTag(strategy_2.anyString("图片标签"));
-		
+
 		List<WanTuInfo> list_2 = EasyExcel.export(fileItem, strategy_2);
-		
+
 		Assert.assertEquals(1, list_2.size());
-		
+
 		WanTuInfo wti = list_2.get(0);
 		Assert.assertEquals("好可爱好可爱好可爱", wti.getDesc());
 		Assert.assertEquals("女装", wti.getTag());
-		Assert.assertEquals("http://img03.taobaocdn.com/imgextra/i3/17577017030820661/T1e7zjXeJkXXXXXXXX_!!397007577-0-pix.jpg", wti.getPicUrl());
+		Assert.assertEquals(
+				"http://img03.taobaocdn.com/imgextra/i3/17577017030820661/T1e7zjXeJkXXXXXXXX_!!397007577-0-pix.jpg",
+				wti.getPicUrl());
 		Assert.assertEquals("http://item.taobao.com/item.htm?spm=161.1000655.0.146&id=1", wti.getItemUrl());
 		Assert.assertEquals("www.lc.com", wti.getFrom());
 	}

@@ -9,9 +9,9 @@ import com.google.common.collect.Maps;
 public abstract class AbstractMapperStrategy implements MapperStrategy {
 
 	private static final ThreadLocal<Map<Class<?>, ExcelObjectMapper>> threadLocalMap = new ThreadLocal<Map<Class<?>, ExcelObjectMapper>>();
-	
+
 	protected ExcelConfig config;
-	
+
 	public AbstractMapperStrategy(ExcelConfig config) {
 		this.config = config;
 	}

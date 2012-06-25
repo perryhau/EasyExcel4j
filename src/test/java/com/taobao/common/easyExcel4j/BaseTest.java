@@ -37,10 +37,10 @@ public class BaseTest {
 		}
 		return item;
 	}
-	
+
 	@Test
-	public void testApp(){
-		
+	public void testApp() {
+
 	}
 
 }

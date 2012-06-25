@@ -1,6 +1,5 @@
 package com.taobao.common.easyExcel4j;
 
-
 public class MapperStrategyFactory {
 
 	private static class SingletonHolder {
@@ -27,8 +26,7 @@ public class MapperStrategyFactory {
 		return new DynamicMapperStrategy(clazz);
 	}
 
-	public <T> XmlMapperStrategy getXmlMapperStrategy(Class<T> clazz, String... xmlPath)
-			throws Exception {
+	public <T> XmlMapperStrategy getXmlMapperStrategy(Class<T> clazz, String... xmlPath) throws Exception {
 		return new XmlMapperStrategy(clazz, xmlPath);
 	}
 

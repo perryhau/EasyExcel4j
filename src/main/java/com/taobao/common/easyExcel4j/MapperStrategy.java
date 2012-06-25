@@ -14,14 +14,14 @@ public interface MapperStrategy {
 	List<ExcelObjectMapperDO> getAbsenceExcelColumn();
 
 	void intValueMap(String objectFieldName, Map<String, ?> valueMap);
-	
+
 	ExcelConfig getConfig();
 
 	/**
 	 * 清除关系
 	 */
 	void clean();
-	
+
 	/**
 	 * 跟Excel建立对应关系
 	 */

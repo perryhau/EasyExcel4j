@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -22,8 +22,7 @@ import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
  */
 public class XmlMapperStrategy extends AbstractMapperStrategy {
 
-	public <T> XmlMapperStrategy(Class<T> clazz, String... pathXml)
-			throws Exception {
+	public <T> XmlMapperStrategy(Class<T> clazz, String... pathXml) throws Exception {
 		super(new ExcelConfig(clazz));
 
 		SAXReader reader = new SAXReader();
@@ -36,13 +35,11 @@ public class XmlMapperStrategy extends AbstractMapperStrategy {
 			for (Iterator<?> it = root.elementIterator(); it.hasNext();) {
 				Element elm = (Element) it.next();
 				String className = elm.attributeValue("class");
-				Class<?> temClass = ClassLoader.getSystemClassLoader()
-						.loadClass(className);
+				Class<?> temClass = ClassLoader.getSystemClassLoader().loadClass(className);
 
 				List<ExcelObjectMapperDO> list = getMapperDOs(temClass);
 
-				for (Iterator<?> columnIt = elm.elementIterator(); columnIt
-						.hasNext();) {
+				for (Iterator<?> columnIt = elm.elementIterator(); columnIt.hasNext();) {
 					Element columnElm = (Element) columnIt.next();
 					String columnName = columnElm.attributeValue("columnName");
 					String fieldName = columnElm.attributeValue("fieldName");
@@ -53,14 +50,12 @@ public class XmlMapperStrategy extends AbstractMapperStrategy {
 					eom.setObjectFieldName(fieldName);
 					eom.setRequired(Boolean.valueOf(required));
 
-					Class<?> type = temClass.getDeclaredField(fieldName)
-							.getType();
+					Class<?> type = temClass.getDeclaredField(fieldName).getType();
 					eom.setObjectFieldType(type);
 
 					if (type.getSimpleName().equalsIgnoreCase("boolean")) {
 						Map<String, Boolean> valueMap = Maps.newHashMap();
-						for (Iterator<?> valIt = columnElm.elementIterator(); valIt
-								.hasNext();) {
+						for (Iterator<?> valIt = columnElm.elementIterator(); valIt.hasNext();) {
 							Element valElm = (Element) valIt.next();
 							String name = valElm.attributeValue("key");
 							String value = valElm.attributeValue("value");
@@ -75,8 +70,7 @@ public class XmlMapperStrategy extends AbstractMapperStrategy {
 
 	}
 
-	private ExcelObjectMapperDO getByFieldName(List<ExcelObjectMapperDO> list,
-			String fieldName) {
+	private ExcelObjectMapperDO getByFieldName(List<ExcelObjectMapperDO> list, String fieldName) {
 		for (ExcelObjectMapperDO excelObjectMapperDO : list) {
 			if (excelObjectMapperDO.getObjectFieldName().equals(fieldName)) {
 				return excelObjectMapperDO;
@@ -91,14 +85,13 @@ public class XmlMapperStrategy extends AbstractMapperStrategy {
 	public void init(FileItem fileItem) throws Exception {
 		try {
 			// 找到第一行
-			HSSFRow row = EasyExcelUtils.getRow(fileItem, 0, 0);
+			Row row = EasyExcelUtils.getRow(fileItem, 0, 0);
 			// 根据字段名称找列号
 			Iterator<?> it = row.cellIterator();
 			for (int i = 0; it.hasNext(); i++) {
-				HSSFCell cell = (HSSFCell) it.next();
+				Cell cell = (Cell) it.next();
 				for (ExcelObjectMapperDO eom : getMapperDOs()) {
-					if (eom.getExcelColumnName().equals(
-							EasyExcelUtils.getCellStringValue(cell))) {
+					if (eom.getExcelColumnName().equals(EasyExcelUtils.getCellStringValue(cell))) {
 						eom.setExcelColumnNum(i);
 						break;
 					}

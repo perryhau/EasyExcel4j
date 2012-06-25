@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 import com.google.common.collect.Maps;
 import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
@@ -22,8 +22,8 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	public <T> DynamicMapperStrategy(Class<T> clazz) {
 		super(new ExcelConfig(clazz));
 	}
-	
-	public DynamicMapperStrategy(ExcelConfig config){
+
+	public DynamicMapperStrategy(ExcelConfig config) {
 		super(config);
 	}
 
@@ -32,8 +32,7 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 		return proxy.getProxyInstance();
 	}
 
-	private ExcelObjectMapperDO add(String columnName, boolean required,
-			Class<?> type) {
+	private ExcelObjectMapperDO add(String columnName, boolean required, Class<?> type) {
 		ExcelObjectMapperDO eom = new ExcelObjectMapperDO();
 		eom.setExcelColumnName(columnName);
 		eom.setRequired(required);
@@ -123,13 +122,11 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	}
 
 	// Boolean
-	public boolean anyBoolean(String columnName, String isTrueString,
-			String isFalseString) {
+	public boolean anyBoolean(String columnName, String isTrueString, String isFalseString) {
 		return anyBoolean(columnName, isTrueString, isFalseString, true);
 	}
 
-	public boolean anyBoolean(String columnName, String isTrueString,
-			String isFalseString, boolean required) {
+	public boolean anyBoolean(String columnName, String isTrueString, String isFalseString, boolean required) {
 		Map<String, Boolean> map = Maps.newHashMap();
 		map.put(isTrueString, Boolean.TRUE);
 		map.put(isFalseString, Boolean.FALSE);
@@ -150,22 +147,21 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 	@Override
 	public void init(FileItem fileItem) throws Exception {
 		try {
-			
+
 			// 找到第一行
-			HSSFRow row = EasyExcelUtils.getRow(fileItem, config.sheetNum(fileItem), config.startRowNum(fileItem));
+			Row row = EasyExcelUtils.getRow(fileItem, config.sheetNum(fileItem), config.startRowNum(fileItem));
 			// 根据字段名称找列号
 			Iterator<?> it = row.cellIterator();
 			for (int i = 0; it.hasNext(); i++) {
-				HSSFCell cell = (HSSFCell) it.next();
+				Cell cell = (Cell) it.next();
 				for (ExcelObjectMapperDO eom : getMapperDOs()) {
-					if (eom.getExcelColumnName().equals(
-							EasyExcelUtils.getCellStringValue(cell))) {
-						if(config.getMapType().getValue() == MapperEnum.horizontal.getValue()){
-							eom.setExcelColumnNum(i+1);
-						} else if (config.getMapType().getValue() == MapperEnum.vertical.getValue()){
+					if (eom.getExcelColumnName().equals(EasyExcelUtils.getCellStringValue(cell))) {
+						if (config.getMapType().getValue() == MapperEnum.horizontal.getValue()) {
+							eom.setExcelColumnNum(i + 1);
+						} else if (config.getMapType().getValue() == MapperEnum.vertical.getValue()) {
 							eom.setExcelColumnNum(i);
 						}
-						
+
 					}
 				}
 			}

@@ -9,20 +9,21 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import com.taobao.common.easyExcel4j.util.EasyExcelUtils;
 
 public class EasyExcel {
-	
-	public static List<ExcelObjectMapperDO> getAbsenceExcelColumn(FileItem fileItem, MapperStrategy mapperStrategy) throws Exception {
+
+	public static List<ExcelObjectMapperDO> getAbsenceExcelColumn(FileItem fileItem, MapperStrategy mapperStrategy)
+			throws Exception {
 		try {
 			// 首先建立映射
 			mapperStrategy.init(fileItem);
 			return mapperStrategy.getAbsenceExcelColumn();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw e;
 		} finally {
 			mapperStrategy.clean();
@@ -31,10 +32,10 @@ public class EasyExcel {
 
 	public static <T> List<T> export(FileItem fileItem, MapperStrategy mapperStrategy) throws Exception {
 		try {
-			
+
 			// 首先建立映射
 			mapperStrategy.init(fileItem);
-			
+
 			List<T> result = new ArrayList<T>();
 			// 检查缺省的Excel column
 			List<ExcelObjectMapperDO> absence = mapperStrategy.getAbsenceExcelColumn();
@@ -43,33 +44,33 @@ public class EasyExcel {
 				throw new Exception("required column [" + absence.toString() + "]");
 			}
 			// 抽取指定字段的数据
-			HSSFSheet sheet = EasyExcelUtils.getSheet(fileItem, mapperStrategy.getConfig().sheetNum(fileItem));
-			HSSFRow row = null;
+			Sheet sheet = EasyExcelUtils.getSheet(fileItem, mapperStrategy.getConfig().sheetNum(fileItem));
+			Row row = null;
 			int maxRowNum = sheet.getLastRowNum();
 			Integer rowS = mapperStrategy.getConfig().startRowNum(fileItem);
 			Integer rowE = mapperStrategy.getConfig().endRowNum();
 			for (int i = 0; i <= maxRowNum; i++) {
 				// 开始行
-				if(mapperStrategy.getConfig().getMapType().getValue() == MapperEnum.horizontal.getValue() && i < rowS){
+				if (mapperStrategy.getConfig().getMapType().getValue() == MapperEnum.horizontal.getValue() && i < rowS) {
 					continue;
 				}
-				if(mapperStrategy.getConfig().getMapType().getValue() == MapperEnum.vertical.getValue() && i <= rowS){
+				if (mapperStrategy.getConfig().getMapType().getValue() == MapperEnum.vertical.getValue() && i <= rowS) {
 					continue;
 				}
-				
+
 				row = sheet.getRow(i);
 				if (EasyExcelUtils.isNull(row)) {
 					continue;
 				}
-				
+
 				// 到下一个alias前终止
 				// TODO
-				
+
 				// 结束行
-				if(rowE!= null && i>=rowE){
+				if (rowE != null && i >= rowE) {
 					break;
 				}
-				
+
 				T t = fill(row, mapperStrategy);
 				result.add(t);
 
@@ -81,7 +82,7 @@ public class EasyExcel {
 			mapperStrategy.clean();
 		}
 	}
-	
+
 	/**
 	 * 将Excel中的一行转换成DO
 	 * 
@@ -89,7 +90,7 @@ public class EasyExcel {
 	 * @return
 	 * @throws Exception
 	 */
-	private static <T> T fill(HSSFRow row, MapperStrategy mapperStrategy) throws Exception {
+	private static <T> T fill(Row row, MapperStrategy mapperStrategy) throws Exception {
 		@SuppressWarnings("unchecked")
 		T t = (T) mapperStrategy.getConfig().getClazz().newInstance();
 		for (ExcelObjectMapperDO eom : mapperStrategy.getMapperDOs()) {
@@ -97,7 +98,7 @@ public class EasyExcel {
 			if (!eom.isRequired() && eom.getExcelColumnNum() == null) {
 				continue;
 			}
-			HSSFCell cell = row.getCell(eom.getExcelColumnNum());
+			Cell cell = row.getCell(eom.getExcelColumnNum());
 			if (eom.isRequired() && StringUtils.isEmpty(EasyExcelUtils.getCellStringValue(cell))) {
 				throw new Exception(eom.getExcelColumnName() + "is empty.");
 			}

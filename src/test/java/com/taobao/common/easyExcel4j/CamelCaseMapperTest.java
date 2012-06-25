@@ -36,7 +36,7 @@ public class CamelCaseMapperTest extends BaseTest {
 		Assert.assertEquals(100.25d, result.getSalary());
 
 	}
-	
+
 	@Test
 	public void testDynamicMapperStrategy1() throws Exception {
 
