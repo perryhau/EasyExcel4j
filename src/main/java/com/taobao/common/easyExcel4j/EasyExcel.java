@@ -25,8 +25,6 @@ public class EasyExcel {
 			return mapperStrategy.getAbsenceExcelColumn();
 		} catch (Exception e) {
 			throw e;
-		} finally {
-			mapperStrategy.clean();
 		}
 	}
 
