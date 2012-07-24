@@ -150,6 +150,9 @@ public class DynamicMapperStrategy extends AbstractMapperStrategy {
 
 			// 找到第一行
 			Row row = EasyExcelUtils.getRow(fileItem, config.sheetNum(fileItem), config.startRowNum(fileItem));
+			if (row == null) {
+				return;
+			}
 			// 根据字段名称找列号
 			Iterator<?> it = row.cellIterator();
 			for (int i = 0; it.hasNext(); i++) {

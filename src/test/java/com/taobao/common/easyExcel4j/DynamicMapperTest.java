@@ -73,6 +73,98 @@ public class DynamicMapperTest extends BaseTest {
 		Assert.assertEquals(100.25d, result.getSalary());
 
 	}
+	
+	/**
+	 * 检查column后，导出
+	 * @throws Exception
+	 */
+	@Test
+	public void testDynamicMapperStrategy_1() throws Exception {
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
+		EeUser user = strategy.getInstance();
+		Assert.assertNotNull(user);
+		Assert.assertTrue(user instanceof EeUser);
+
+		user.setUserName(strategy.anyString("姓名", true));
+		user.setAge(strategy.anyInteger("年龄"));
+		user.setGender(strategy.anyBoolean("性别", "男", "女"));
+		user.setPhone(strategy.anyLong("手机"));
+		user.setBirth(strategy.anyDate("出生日期"));
+		user.setSalary(strategy.anyDouble("工资"));
+		
+		List<ExcelObjectMapperDO> absence = EasyExcel.getAbsenceExcelColumn(fileItem, strategy);
+		Assert.assertEquals(0, absence.size());
+
+		List<EeUser> list = EasyExcel.export(fileItem, strategy);
+		Assert.assertNotNull(list);
+		Assert.assertEquals(1, list.size());
+
+		EeUser result = list.get(0);
+		Assert.assertEquals("张三", result.getUserName());
+		Assert.assertEquals(25, result.getAge());
+		Assert.assertEquals(true, result.isGender());
+		Assert.assertEquals(12312341234L, result.getPhone());
+		Assert.assertEquals(DateUtils.parseDate("1985/5/3", new String[] { "yyyy/M/d" }), result.getBirth());
+		Assert.assertEquals(100.25d, result.getSalary());
+
+	}
+	
+	/**
+	 * 只有title，返回list.size()=0
+	 * @throws Exception
+	 */
+	@Test
+	public void testDynamicMapperStrategy_only_title() throws Exception {
+		fileItem = createFileItem(this.getClass().getResource("/").getPath(), "DynamicMapperTest_only_title.xls");
+		
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
+		EeUser user = strategy.getInstance();
+		Assert.assertNotNull(user);
+		Assert.assertTrue(user instanceof EeUser);
+
+		user.setUserName(strategy.anyString("姓名", true));
+		user.setAge(strategy.anyInteger("年龄"));
+		user.setGender(strategy.anyBoolean("性别", "男", "女"));
+		user.setPhone(strategy.anyLong("手机"));
+		user.setBirth(strategy.anyDate("出生日期"));
+		user.setSalary(strategy.anyDouble("工资"));
+		
+		List<ExcelObjectMapperDO> absence = EasyExcel.getAbsenceExcelColumn(fileItem, strategy);
+		Assert.assertEquals(0, absence.size());
+
+		List<EeUser> list = EasyExcel.export(fileItem, strategy);
+		Assert.assertNotNull(list);
+		Assert.assertEquals(0, list.size());
+	}
+	
+	/**
+	 * 没有内容，抛异常
+	 * @throws Exception
+	 */
+	@Test(expected = Exception.class)
+	public void testDynamicMapperStrategy_null() throws Exception {
+		fileItem = createFileItem(this.getClass().getResource("/").getPath(), "DynamicMapperTest_null.xls");
+		
+		DynamicMapperStrategy strategy = MapperStrategyFactory.getInstance().getDynamicMapperStrategy(EeUser.class);
+		EeUser user = strategy.getInstance();
+		Assert.assertNotNull(user);
+		Assert.assertTrue(user instanceof EeUser);
+
+		user.setUserName(strategy.anyString("姓名", true));
+		user.setAge(strategy.anyInteger("年龄", false));
+		user.setGender(strategy.anyBoolean("性别", "男", "女"));
+		user.setPhone(strategy.anyLong("手机"));
+		user.setBirth(strategy.anyDate("出生日期"));
+		user.setSalary(strategy.anyDouble("工资"));
+		
+		List<ExcelObjectMapperDO> absence = EasyExcel.getAbsenceExcelColumn(fileItem, strategy);
+		Assert.assertEquals(5, absence.size());
+
+		List<EeUser> list = EasyExcel.export(fileItem, strategy);
+		Assert.assertNotNull(list);
+		Assert.assertEquals(0, list.size());
+	}
+
 
 	@Test
 	public void testWT() throws Exception {

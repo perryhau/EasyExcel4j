@@ -65,7 +65,7 @@ public class EasyExcelUtils {
 
 	public static Row getRow(Sheet sheet, int rowNum) throws Exception {
 		// 验证有误数据
-		if (sheet == null || sheet.getLastRowNum() < 1) {
+		if (sheet == null) {
 			throw new IllegalArgumentException("file content is null.");
 		}
 		if (rowNum < 0) {
