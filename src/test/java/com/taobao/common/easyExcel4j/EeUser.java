@@ -9,6 +9,8 @@ public class EeUser {
 	private long phone;
 	private Date birth;
 	private double salary;
+	private Byte status;
+	
 	private String description;
 
 	public String getUserName() {
@@ -67,4 +69,11 @@ public class EeUser {
 		this.description = description;
 	}
 
+	public Byte getStatus() {
+		return status;
+	}
+
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
 }

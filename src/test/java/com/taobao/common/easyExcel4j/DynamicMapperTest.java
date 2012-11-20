@@ -59,6 +59,7 @@ public class DynamicMapperTest extends BaseTest {
 		user.setPhone(strategy.anyLong("手机"));
 		user.setBirth(strategy.anyDate("出生日期"));
 		user.setSalary(strategy.anyDouble("工资"));
+		user.setStatus(strategy.anyByte("状态"));
 
 		List<EeUser> list = EasyExcel.export(fileItem, strategy);
 		Assert.assertNotNull(list);
@@ -71,6 +72,7 @@ public class DynamicMapperTest extends BaseTest {
 		Assert.assertEquals(12312341234L, result.getPhone());
 		Assert.assertEquals(DateUtils.parseDate("1985/5/3", new String[] { "yyyy/M/d" }), result.getBirth());
 		Assert.assertEquals(100.25d, result.getSalary());
+		Assert.assertEquals(Byte.valueOf("1"), result.getStatus());
 
 	}
 	

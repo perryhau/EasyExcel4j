@@ -133,6 +133,11 @@ public class EasyExcel {
 								value);
 						continue;
 					}
+					if (fieldType.getSimpleName().equalsIgnoreCase("byte")) {
+						BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
+								new BigDecimal(EasyExcelUtils.getCellStringValue(cell)).byteValue());
+						continue;
+					}
 					BeanUtils.setProperty(t, mapperStrategy.get(eom.getExcelColumnNum()).getObjectFieldName(),
 							EasyExcelUtils.getCellStringValue(cell));
 				} catch (Exception e) {
